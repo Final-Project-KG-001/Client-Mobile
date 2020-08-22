@@ -1,40 +1,62 @@
 import React from 'react'
-import { View, Text, StyleSheet, SafeAreaView, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { useQuery, gql } from '@apollo/client'
+import {  LOGIN, GET_APPOINTMENT } from '../config/apolloClient'
 
-export default function Home() {
+export default function Home({ route, navigation }) {
+    const isAppointment = false
+    const login = useQuery(LOGIN)
+    const appointments = useQuery(GET_APPOINTMENT)
+    let coba = null
+    
+    if ( login.data && appointments.data ) {
+        coba = appointments.data.localAppointment.filter(x => x.user.email === appointments.data.localAppointment.email)
+    }
+    console.log(coba)
+
+    function makeAppointment(event) {
+        event.preventDefault()
+        navigation.navigate('MakeAppointment')
+    }
+
     return (
-        <SafeAreaView style={styles.droidSafeArea}>
+        <View style={styles.container}>
             <View style={styles.header}>
-                <Text style={{ fontSize: 30, fontWeight: 'bold' }}>Antrean</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Antrean</Text>
             </View>
-            <ScrollView style={{flex:1}}>
-                <View style={ styles.contentCard }>
-                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>sdadwdad</Text>
+            {coba.length > 0 && 
+                <View>
+                    <View style={ styles.contentCard }>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>antrian sekarang</Text>
+                    </View>
+                    <View style={ styles.contentCard }>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>antrian saya</Text>
+                    </View>
                 </View>
-                <View style={ styles.contentCard }>
-                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>sdadwdad</Text>
-                </View>
-            </ScrollView>
-        </SafeAreaView>
+            }
+            {coba.length == 0 && 
+                <TouchableOpacity onPress={makeAppointment} style={{ ...styles.button, backgroundColor: 'blue' }}>
+                    <View>
+                        <Text style={{ ...styles.buttonText, color: 'white' }}>Make Appointment</Text>
+                    </View>
+                </TouchableOpacity>
+            }
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
-    droidSafeArea: {
+    container: {
       flex: 1,
-      backgroundColor: '#CEECF5'
+      backgroundColor: '#ffcccc'
     },
     header: {
-        top: 0,
-        left: 0,
-        right: 0,
-        backgroundColor: 'lightskyblue',
-        height: 90,
+        backgroundColor: '#e66767',
+        height: 80,
         alignItems: 'center',
-        justifyContent: 'center'
+        paddingTop: 40
     },
     contentCard: {
-        flex: 1,
         marginHorizontal: 20,
         marginTop: 50,
         height: 130,
@@ -42,5 +64,19 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    buttonText: {
+        fontSize:20,
+        fontWeight: 'bold'
+    },
+    button: {
+        backgroundColor: 'white',
+        height: 50,
+        marginTop: 30,
+        marginHorizontal: 20,
+        borderRadius: 35,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginVertical: 5
     }
 })

@@ -1,0 +1,48 @@
+{
+  "user": [
+    {
+      "id": 1,
+      "name": "sandi",
+      "email": "aarsandi@gmail.com",
+      "password": "pasword"
+    },
+    {
+      "id": 2,
+      "name": "user",
+      "email": "user@gmail.com",
+      "password": "password"
+    }
+  ],
+  "doctor": [
+    {
+      "id": 1,
+      "name": "johnny deep",
+      "poli": "umum"
+    },
+    {
+      "id": 2,
+      "name": "lala",
+      "poli": "tht"
+    }
+  ],
+  "appointment": [
+    {
+      "id": 1,
+      "doctorId": 2,
+      "urutan": 1,
+      "status": "proses"
+    },
+    {
+      "id": 2,
+      "doctorId": 2,
+      "urutan": 2,
+      "status": "proses"
+    },
+    {
+      "id": 3,
+      "doctorId": 1,
+      "urutan": 3,
+      "status": "proses"
+    }
+  ]
+}

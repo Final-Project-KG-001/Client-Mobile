@@ -1,35 +1,39 @@
 import React from 'react'
-import { View, Text, StyleSheet, SafeAreaView, ScrollView } from 'react-native'
-
+import { View, Text, StyleSheet } from 'react-native'
+import { useQuery, gql } from '@apollo/client'
+import { GET_DOCTORS } from '../config/apolloClient'
 import DoctorCard from '../components/DoctorCard'
 
 export default function ListDoctor() {
+    const doctors = useQuery(GET_DOCTORS)
+
     return (
-        <SafeAreaView style={styles.droidSafeArea}>
+        <View style={styles.container}>
             <View style={styles.header}>
-                <Text style={{ fontSize: 30, fontWeight: 'bold' }}>List Doctor</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>List Doctor</Text>
             </View>
-            <ScrollView style={{flex:1}}>
-                <DoctorCard/>
-                <DoctorCard/>
-                <DoctorCard/>
-            </ScrollView>
-        </SafeAreaView>
+            { doctors.loading && <Text>loading</Text> }
+            { doctors.error && <Text>error</Text> }
+            { doctors.data && <View>
+                {
+                    doctors.data.localDoctors.map(doctor => (
+                        <DoctorCard key={doctor._id} doctor={doctor}/>
+                    ))
+                }
+            </View> }
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
-    droidSafeArea: {
-      flex: 1,
-      backgroundColor: '#CEECF5'
+    container: {
+        flex: 1,
+        backgroundColor: '#ffcccc'
     },
     header: {
-        top: 0,
-        left: 0,
-        right: 0,
-        backgroundColor: 'lightskyblue',
-        height: 90,
+        backgroundColor: '#e66767',
+        height: 80,
         alignItems: 'center',
-        justifyContent: 'center'
+        paddingTop: 40
     }
 })
