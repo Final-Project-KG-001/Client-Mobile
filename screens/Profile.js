@@ -1,11 +1,15 @@
 import React from 'react'
 import { View, Text, StyleSheet, SafeAreaView, ScrollView, Image, TouchableOpacity } from 'react-native'
-import client, { LOGIN } from '../config/apolloClient'
+import { useQuery, gql } from '@apollo/client'
+import client, { LOGIN, GET_Users } from '../config/apolloClient'
 
 import DetailProfile from '../components/DetailProfile'
 import FormEditProfile from '../components/FormEditProfile'
 
 export default function Profile({ navigation }) {
+    const users = useQuery(GET_Users)
+    console.log(users.data.localUsers)
+
     function logout(event) {
         event.preventDefault()
         const {login} = client.readQuery({

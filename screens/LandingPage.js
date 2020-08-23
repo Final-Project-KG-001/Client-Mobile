@@ -19,6 +19,7 @@ export default function LandingPage({ navigation }) {
     if (login) {
         login.refetch()
     }
+    console.log(login.data)
 
     return (
         <View style={ styles.container }>

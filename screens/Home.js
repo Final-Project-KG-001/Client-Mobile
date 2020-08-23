@@ -12,7 +12,7 @@ export default function Home({ route, navigation }) {
     if ( login.data && appointments.data ) {
         coba = appointments.data.localAppointment.filter(x => x.user.email === appointments.data.localAppointment.email)
     }
-    console.log(coba)
+    console.log(login.data)
 
     function makeAppointment(event) {
         event.preventDefault()

@@ -37,6 +37,20 @@ export const GET_APPOINTMENT = gql`
   }
 `
 
+export const GET_Users = gql`
+  query {
+    localUsers {
+      _id
+      name
+      dob
+      email
+      password
+      phoneNumber
+      role
+    }
+  }
+`
+
 client.writeQuery({
   query: GET_DOCTORS,
   data: {
@@ -50,6 +64,32 @@ client.writeQuery({
         _id: 2,
         name: "fiah",
         polyclinic: "tht"
+      }
+    ]
+  }
+})
+
+client.writeQuery({
+  query: GET_Users,
+  data: {
+    localUsers: [
+      {
+        _id: 1,
+        name: 'user1',
+        dob: '280920',
+        email: 'user1@mail.com',
+        password: 'password',
+        phoneNumber: '08912345678',
+        role: 'user'
+      },
+      {
+        _id: 2,
+        name: 'user2',
+        dob: '280920',
+        email: 'user2@mail.com',
+        password: 'password',
+        phoneNumber: '08912345678',
+        role: 'user'
       }
     ]
   }
