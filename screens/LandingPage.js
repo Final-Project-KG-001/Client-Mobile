@@ -19,6 +19,11 @@ export default function LandingPage({ navigation }) {
         navigation.navigate('Dashboard')
     }
 
+    function toQR(event) {
+        event.preventDefault()
+        navigation.navigate('QRCode')
+    }
+
     return (
         <View style={{ flex: 1, backgroundColor: 'white', justifyContent: 'flex-end' }}>
             <View style={{ ...StyleSheet.absoluteFill }}>
@@ -35,6 +40,9 @@ export default function LandingPage({ navigation }) {
                 </TouchableOpacity>
                 <TouchableOpacity onPress={toDashboard} style={{ ...styles.button, backgroundColor: 'blue' }}>
                     <Text style={{ fontSize:20, fontWeight: 'bold', color: 'white' }}>Dashboard</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={toQR} style={{ ...styles.button, backgroundColor: 'blue' }}>
+                    <Text style={{ fontSize:20, fontWeight: 'bold', color: 'white' }}>QR Code</Text>
                 </TouchableOpacity>
             </View>
         </View>

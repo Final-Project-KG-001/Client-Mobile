@@ -7,6 +7,7 @@ import Dashboard from './screens/Dashboard'
 import LandingPage from './screens/LandingPage'
 import Login from './screens/Login'
 import Register from './screens/Register'
+import QRCode from './screens/QRCode'
 
 const Stack = createStackNavigator()
 
@@ -49,6 +50,7 @@ export default function App() {
         <Stack.Screen name="Dashboard" component={ Dashboard }/>
         <Stack.Screen name="Login" component={ Login }/>
         <Stack.Screen name="Register" component={ Register }/>
+        <Stack.Screen name="QRCode" component={ QRCode }/>
       </Stack.Navigator>
     </NavigationContainer>
   );
