@@ -1,50 +1,31 @@
 import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs'
 import { Ionicons } from '@expo/vector-icons'
 
-const Tab = createBottomTabNavigator()
+const Tab = createMaterialBottomTabNavigator()
 
 import ListDoctor from '../screens/ListDoctor'
-import Home from '../screens/Home'
 import Profile from '../screens/Profile'
+import HomeNavigation from './HomeNavigation'
 
-function getHeaderTitle(route) {
-    const routeName = route.state ? route.state.routes[route.state.index].name : 'Home'
-    switch(routeName) {
-      case "Home":
-        return "Home";
-      case "ListDoctor":
-        return "List Doctor"
-    }
-  }
-
-export default function Dashboard({ navigation, route }) {
-    navigation.setOptions({ headerTitle: getHeaderTitle(route) })
+export default function Dashboard() {
     return (
-        <Tab.Navigator screenOptions={({route}) => ({
-            tabBarIcon:({color, size}) => {
+        <Tab.Navigator barStyle={{ backgroundColor: 'white' }} screenOptions={({ route }) => ({
+            tabBarIcon: ({ color }) => {
                 let iconName
-                if(route.name == 'Home') {
+                if (route.name == 'Home') {
                     iconName = 'ios-home'
-                } else if(route.name == 'ListDoctor') {
+                } else if (route.name == 'ListDoctor') {
                     iconName = 'ios-clipboard'
-                } else if(route.name == 'Profile') {
+                } else if (route.name == 'Profile') {
                     iconName = 'ios-person'
                 }
-                return <Ionicons name={iconName} color={color} size={size}/>
+                return <Ionicons name={iconName} color={color} size={23} />
             }
         })}>
-            <Tab.Screen name="Home" component={ Home }/>
-            <Tab.Screen name="ListDoctor" component={ ListDoctor }/>
-            <Tab.Screen name="Profile" component={ Profile }/>
+            <Tab.Screen name="Home" component={HomeNavigation} />
+            <Tab.Screen name="ListDoctor" component={ListDoctor} />
+            <Tab.Screen name="Profile" component={Profile} />
         </Tab.Navigator>
     )
 }
-
-const styles = StyleSheet.create({
-    droidSafeArea: {
-      flex: 1,
-      paddingTop: Platform.OS === 'android' ? 25 : 0
-    }
-})

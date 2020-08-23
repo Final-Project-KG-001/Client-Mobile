@@ -1,58 +1,74 @@
 import React from 'react'
 import { View, Text, StyleSheet, SafeAreaView, ScrollView, Image, TouchableOpacity } from 'react-native'
+import { useQuery, gql } from '@apollo/client'
+import client, { LOGIN, GET_Users } from '../config/apolloClient'
 
-export default function Profile() {
+import DetailProfile from '../components/DetailProfile'
+import FormEditProfile from '../components/FormEditProfile'
+
+export default function Profile({ navigation }) {
+    const users = useQuery(GET_Users)
+    console.log(users.data.localUsers)
+
+    function logout(event) {
+        event.preventDefault()
+        const {login} = client.readQuery({
+            query: LOGIN
+        })
+        client.writeQuery({
+            query: LOGIN,
+            data: {
+                login: {
+                    token: "",
+                    isLogin: false,
+                    email: ''
+                }
+            }
+        })
+        navigation.navigate('LandingPage')
+    }
+
     return (
-        <SafeAreaView style={{flex:1}}>
+        <View style={ styles.container }>
             <View style={styles.header}>
-                <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 40 }}>Customer Name</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Customer Name</Text>
             </View>
-            <ScrollView style={{flex:1}}>
-                <View style={{ marginTop: 40, marginLeft: 10 }}>
-                    <Image source={require('../assets/dummy.png')} style={{
-                        flex: 1, height: 80, width: 80, borderRadius: 40, borderColor: 'white', borderWidth: 3
-                    }}/>
-                </View>
-                <View style={ styles.contentCard }>
-                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>sdadwdad</Text>
-                </View>
-                <TouchableOpacity style={{ ...styles.button, backgroundColor: 'blue' }}>
+            <View style={{ marginTop: 40, marginHorizontal: 10 }}>
+                <Image source={require('../assets/dummy.png')} style={{
+                    height: 80, width: 80, borderRadius: 40, borderColor: 'white', borderWidth: 3
+                }}/>
+                <DetailProfile/>
+                {/* <FormEditProfile/> */}
+                <TouchableOpacity onPress={logout} style={{ ...styles.button }}>
                     <Text style={{ fontSize:20, fontWeight: 'bold', color: 'white' }}>Logout</Text>
                 </TouchableOpacity>
-            </ScrollView>
-        </SafeAreaView>
+            </View>
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#ffcccc'
+    },
     header: {
         position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
-        backgroundColor: 'lightskyblue',
+        backgroundColor: '#e66767',
         height: 80,
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    contentCard: {
-        flex: 1,
-        marginHorizontal: 20,
-        marginTop: 20,
-        height: 130,
-        backgroundColor: 'white',
-        borderRadius: 20,
-        alignItems: 'center',
-        justifyContent: 'center'
+        paddingTop: 40,
+        paddingLeft: 100
     },
     button: {
-        backgroundColor: 'white',
+        backgroundColor: '#eb4d4b',
         height: 50,
         marginTop: 30,
-        marginHorizontal: 20,
         borderRadius: 35,
         alignItems: 'center',
         justifyContent: 'center',
         marginVertical: 5
-    },
+    }
 })
