@@ -1,10 +1,8 @@
-import React,{useEffect} from 'react'
-import { View, Text, ImageBackground, Dimensions, TouchableOpacity, StyleSheet } from 'react-native'
+import React from 'react'
+import { View, Text, ImageBackground, TouchableOpacity, StyleSheet } from 'react-native'
 import { useQuery, gql } from '@apollo/client'
-import { LOGIN } from '../config/apolloClient'
 
 export default function LandingPage({ navigation }) {
-    const login = useQuery(LOGIN)
 
     function toDashboard(event) {
         event.preventDefault()
@@ -16,11 +14,6 @@ export default function LandingPage({ navigation }) {
         navigation.navigate('Login')
     }
 
-    if (login) {
-        login.refetch()
-    }
-    console.log(login.data)
-
     return (
         <View style={ styles.container }>
             <View style={{ ...StyleSheet.absoluteFill }}>
@@ -29,19 +22,9 @@ export default function LandingPage({ navigation }) {
                     <Text style={{ fontSize: 20, textAlign: 'center' }}>lorem ipsum quia dolor sit amet, consectetur, adipisci velit...dsdwaddsdwd</Text>
                 </ImageBackground>
             </View>
-            { login.data && <View>
-                {login.data.login.isLogin &&
-                    <TouchableOpacity onPress={toDashboard} style={{ ...styles.button, backgroundColor: 'blue' }}>
-                        <Text style={{ ...styles.buttonText, color: 'white' }}>Click to Start</Text>
-                    </TouchableOpacity>
-                }
-                {!login.data.login.isLogin &&
-                    <TouchableOpacity onPress={toLoginPage} style={{ ...styles.button, backgroundColor: 'blue' }}>
-                        <Text style={{ ...styles.buttonText, color: 'white' }}>Click to Start</Text>
-                    </TouchableOpacity>
-                }
-            </View> }
-            
+            <TouchableOpacity onPress={toLoginPage} style={{ ...styles.button, backgroundColor: 'blue' }}>
+                <Text style={{ ...styles.buttonText, color: 'white' }}>Click to Start</Text>
+            </TouchableOpacity>
         </View>
     )
 }

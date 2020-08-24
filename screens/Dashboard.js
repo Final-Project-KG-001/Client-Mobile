@@ -20,7 +20,7 @@ export default function Dashboard() {
                 } else if (route.name == 'Profile') {
                     iconName = 'ios-person'
                 }
-                return <Ionicons name={iconName} color={color} size={23} />
+                return <Ionicons name={iconName} color={color} size={25} />
             }
         })}>
             <Tab.Screen name="Home" component={HomeNavigation} />

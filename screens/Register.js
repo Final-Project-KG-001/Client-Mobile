@@ -1,27 +1,58 @@
-import React, {useState} from 'react'
-import { View, Text, ImageBackground, Dimensions, TouchableOpacity, StyleSheet, TextInput } from 'react-native'
+import React, { useState } from 'react'
+import { View, Text, ImageBackground, TouchableOpacity, StyleSheet, TextInput } from 'react-native'
+import { gql, useMutation } from '@apollo/client'
+import client, { IS_LOGIN } from '../config/apolloClient'
+import { pathToArray } from 'graphql/jsutils/Path'
+
+const REGISTER = gql`
+    mutation Register($name:String, $dob:String, $email:String, $password:String, $phoneNumber:String) {
+        registerUser(name: $name, dob: $dob, email: $email, password: $password, phoneNumber: $phoneNumber) {
+            message
+            name
+        }
+    }
+`
 
 export default function Register({ navigation }) {
-    const {height} = Dimensions.get('window')
+    const [name, setName] = useState('')
+    const [dob, setDob] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [phoneNumber, setPhoneNumber] = useState('')
+
+    const [registerUser, result] = useMutation(REGISTER)
     
-    function register(event) {
+    async function register(event) {
         event.preventDefault()
-        console.log({ email, password })
-        navigation.navigate('Login')
+        try {
+            await registerUser({
+                variables: {
+                    name: name,
+                    dob: dob,
+                    email: email,
+                    password: password,
+                    phoneNumber: phoneNumber
+                }
+            })
+            console.log(result)
+            navigation.navigate('Login')
+        } catch (err) {
+            console.log(err)
+        }
     }
 
     return (
         <View style={ styles.container }>
             <View style={{ ...StyleSheet.absoluteFill }}>
-                <ImageBackground source={require('../assets/Rainbow-Pattern.jpg')} style={styles.imgBackground}>
-                    <Text style={{ fontWeight: 'bold', fontSize: 30 }}>Register Page</Text>
-                </ImageBackground>
+                <ImageBackground source={require('../assets/Rainbow-Pattern.jpg')} style={{ flex: 1 }}/>
             </View>
-            <View style={{ height: height/3 }}>
+            <View>
+                <Text style={{ fontWeight: 'bold', fontSize: 30, alignSelf: 'center' }}>Register Page</Text>
+                <TextInput onChangeText={(text) => setName(text)} placeholder="Your Name" style={styles.textInput} placeholderTextColor="black"/>
+                <TextInput onChangeText={(text) => setDob(text)} placeholder="Date of Birth" style={styles.textInput} placeholderTextColor="black"/>
                 <TextInput onChangeText={(text) => setEmail(text)} placeholder="Email" style={styles.textInput} placeholderTextColor="black"/>
                 <TextInput onChangeText={(text) => setPassword(text)} placeholder="Password" style={styles.textInput} placeholderTextColor="black"/>
+                <TextInput onChangeText={(text) => setPhoneNumber(text)} placeholder="Phone Number" style={styles.textInput} placeholderTextColor="black"/>
                 <TouchableOpacity onPress={register} style={{ ...styles.button, backgroundColor: 'blue' }}>
                     <Text style={{ ...styles.buttonText, color: 'white' }}>Submit</Text>
                 </TouchableOpacity>
@@ -36,11 +67,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         justifyContent: 'flex-end'
     },
-    imgBackground: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
     button: {
         backgroundColor: 'white',
         height: 50,
@@ -48,11 +74,12 @@ const styles = StyleSheet.create({
         borderRadius: 35,
         alignItems: 'center',
         justifyContent: 'center',
-        marginVertical: 5
+        marginVertical: 5,
+        marginBottom: 30
     },
     buttonText: {
         fontSize:20,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
     },
     textInput: {
         backgroundColor: 'white',

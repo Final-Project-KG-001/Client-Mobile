@@ -1,17 +1,17 @@
 import React from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 
-export default function DetailProfile() {
+export default function DetailProfile({}) {
     return (
         <View style={ styles.contentCard }>
             <Text style={{ fontSize: 20, fontWeight: 'bold' }}>DATA USER</Text>
             <View style={{ marginTop: 10 }}>
-                <Text style={{ fontSize: 15}}>Username</Text>
-                <Text style={{ fontSize: 20, fontWeight: 'bold'}}>Username</Text>
+                <Text style={{ fontSize: 15}}>Email</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold'}}>user email</Text>
             </View>
             <View style={{ marginTop: 10 }}>
                 <Text style={{ fontSize: 15}}>No Telp</Text>
-                <Text style={{ fontSize: 20, fontWeight: 'bold'}}>08912345678</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold'}}>user telpon</Text>
             </View>
         </View>
     )
