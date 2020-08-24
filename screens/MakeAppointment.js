@@ -20,15 +20,19 @@ export default function MakeAppointment({ navigation }) {
 
     console.log(doctors.data)
 
-    function submit() {
-        // AddAppointment({
-        //     variables: {
-        //         doctorId: itemValue,
-        //         queueNumber: 3
-        //     }
-        // })
-        // console.log(res)
-        navigation.navigate('Home', { appointment: true })
+    async function submit() {
+        try {
+            await AddAppointment({
+                variables: {
+                    doctorId: itemValue,
+                    queueNumber: Number(3)
+                }
+            })
+            console.log(res)
+            navigation.navigate('Home', { appointment: true })
+        } catch(err) {
+            console.log(err)
+        }
     }
 
     return (

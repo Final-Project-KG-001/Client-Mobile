@@ -6,7 +6,6 @@ const REGISTER = gql`
     mutation Register($name:String, $dob:String, $email:String, $password:String, $phoneNumber:String) {
         registerUser(name: $name, dob: $dob, email: $email, password: $password, phoneNumber: $phoneNumber) {
             message
-            name
         }
     }
 `
@@ -20,19 +19,23 @@ export default function Register({ navigation }) {
 
     const [registerUser, result] = useMutation(REGISTER)
     
-    function register(event) {
+    async function register(event) {
         event.preventDefault()
-        // await registerUser({
-        //     variables: {
-        //         name: name,
-        //         dob: dob,
-        //         email: email,
-        //         password: password,
-        //         phoneNumber: phoneNumber
-        //     }
-        // })
-        // console.log(result)
-        navigation.navigate('Login')
+        try {
+            await registerUser({
+                variables: {
+                    name: name,
+                    dob: dob,
+                    email: email,
+                    password: password,
+                    phoneNumber: phoneNumber
+                }
+            })
+            console.log(result)
+            navigation.navigate('Login')
+        } catch (err) {
+            console.log(err)
+        }
     }
 
     return (

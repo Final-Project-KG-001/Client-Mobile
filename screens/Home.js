@@ -16,6 +16,24 @@ export default function Home({ route, navigation }) {
             <TouchableOpacity style={{ ...styles.button, backgroundColor: 'blue' }}>
                 <Text onPress={makeAppointment} style={{ ...styles.buttonText, color: 'white' }}>Make Appointment</Text>
             </TouchableOpacity>
+            <View>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', alignSelf: 'center' }}>thank you for waiting</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', alignSelf: 'center' }}>Here's your position in the queue</Text>
+                <View style={{ ...styles.numberCard, backgroundColor: "black" }}>
+                    <Text style={{ fontSize: 30, fontWeight: 'bold', color: 'white' }}>5</Text>
+                    <Text style={{ fontSize: 13, fontWeight: 'bold', color: 'white' }}>Position</Text>
+                </View>
+                <View style={ styles.contentCard }>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Now Serving</Text>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>3</Text>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>umum</Text>
+                </View>
+                <View style={ styles.contentCard }>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Your Number</Text>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>7</Text>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>umum</Text>
+                </View>
+            </View>
         </View>
     )
 }
