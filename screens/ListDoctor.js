@@ -16,7 +16,7 @@ export default function ListDoctor() {
             { doctors.error && <Text>error</Text> }
             { doctors.data && <View>
                 {
-                    doctors.data.localDoctors.map(doctor => (
+                    doctors.data.doctors.map(doctor => (
                         <DoctorCard key={doctor._id} doctor={doctor}/>
                     ))
                 }

@@ -1,33 +1,32 @@
 import React from 'react'
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
 import { useQuery, gql } from '@apollo/client'
-import client, { LOGIN, GET_Users } from '../config/apolloClient'
+import client, { IS_LOGIN, GET_Users } from '../config/apolloClient'
 
 import DetailProfile from '../components/DetailProfile'
 import FormEditProfile from '../components/FormEditProfile'
 
 export default function Profile({ navigation }) {
     const users = useQuery(GET_Users)
-    const login = useQuery(LOGIN)
+    const isLogin = useQuery(IS_LOGIN)
 
     let user = null
 
-    if (users.data && login.data) {
-        user = users.data.localUsers.filter(x => x.email === login.data.isLogin.email)
+    if (users.data && isLogin.data) {
+        user = users.data.users.filter(x => x.email === isLogin.data.isLogin.email)
     }
     console.log(user)
 
     function logout(event) {
         event.preventDefault()
         client.readQuery({
-            query: LOGIN
+            query: IS_LOGIN
         })
         client.writeQuery({
-            query: LOGIN,
+            query: IS_LOGIN,
             data: {
                 isLogin: {
                     token: "",
-                    status: false,
                     email: ""
                 }
             }
@@ -40,13 +39,13 @@ export default function Profile({ navigation }) {
             { users.data && 
                 <View>
                     <View style={styles.header}>
-                        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>user name</Text>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{user[0].name}</Text>
                     </View>
                     <View style={{ marginTop: 40, marginHorizontal: 10 }}>
                         <Image source={require('../assets/dummy.png')} style={{
                             height: 80, width: 80, borderRadius: 40, borderColor: 'white', borderWidth: 3
                         }}/>
-                        <DetailProfile/>
+                        <DetailProfile user={user[0]}/>
                         {/* <FormEditProfile/> */}
                         <TouchableOpacity onPress={logout} style={{ ...styles.button }}>
                             <Text style={{ fontSize:20, fontWeight: 'bold', color: 'white' }}>Logout</Text>

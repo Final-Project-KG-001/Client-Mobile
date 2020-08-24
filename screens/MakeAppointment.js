@@ -1,37 +1,33 @@
 import React, { useState } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, Picker } from 'react-native'
-import { useQuery } from '@apollo/client'
-import client, { LOGIN, GET_APPOINTMENT, GET_DOCTORS } from '../config/apolloClient'
+import { useQuery, gql, useMutation } from '@apollo/client'
+import { IS_LOGIN, GET_DOCTORS } from '../config/apolloClient'
+
+const ADD_APPOINTMENT = gql`
+    mutation AddAppointment($doctorId:ID, $queueNumber:Int) {
+        addAppointment(doctorId: $doctorId, queueNumber:$queueNumber) {
+            message
+        }
+    }
+`
 
 export default function MakeAppointment({ navigation }) {
     const [itemValue, setItemValue] = useState('')
 
-    const login = useQuery(LOGIN)
     const doctors = useQuery(GET_DOCTORS)
+    const isLogin = useQuery(IS_LOGIN)
+    const [AddAppointment, res] = useMutation(ADD_APPOINTMENT)
+
+    console.log(doctors.data)
 
     function submit() {
-        const { localAppointment } = client.readQuery({
-            query: GET_APPOINTMENT
-        })
-        client.writeQuery({
-            query: GET_APPOINTMENT,
-            data: {
-                localAppointment: [
-                    ...localAppointment,
-                    {
-                        _id: localAppointment.length + 1,
-                        queueNumber: localAppointment.length + 1,
-                        status: "waiting",
-                        user: {
-                          _id: 3,
-                          name: "dummy",
-                          email: login.data.isLogin.email
-                        },
-                        doctor: itemValue
-                      }
-                ]
-            }
-        })
+        // AddAppointment({
+        //     variables: {
+        //         doctorId: itemValue,
+        //         queueNumber: 3
+        //     }
+        // })
+        // console.log(res)
         navigation.navigate('Home', { appointment: true })
     }
 
@@ -49,8 +45,8 @@ export default function MakeAppointment({ navigation }) {
                         onValueChange={(value) => setItemValue(value)}
                     >
                         {
-                            doctors.data.localDoctors.map(doctor => (
-                                <Picker.Item key={doctor._id} label={`dr. ${doctor.name} - ${doctor.polyclinic}`} value={doctor} />
+                            doctors.data.doctors.map(doctor => (
+                                <Picker.Item key={doctor._id} label={`dr. ${doctor.name} - ${doctor.polyclinic}`} value={doctor._id} />
                             ))
                         }
                     </Picker>

@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import { View, Text, ImageBackground, TouchableOpacity, StyleSheet, TextInput } from 'react-native'
 import { gql, useMutation } from '@apollo/client'
-import client, { IS_LOGIN } from '../config/apolloClient'
-import { pathToArray } from 'graphql/jsutils/Path'
 
 const REGISTER = gql`
     mutation Register($name:String, $dob:String, $email:String, $password:String, $phoneNumber:String) {
@@ -22,23 +20,19 @@ export default function Register({ navigation }) {
 
     const [registerUser, result] = useMutation(REGISTER)
     
-    async function register(event) {
+    function register(event) {
         event.preventDefault()
-        try {
-            await registerUser({
-                variables: {
-                    name: name,
-                    dob: dob,
-                    email: email,
-                    password: password,
-                    phoneNumber: phoneNumber
-                }
-            })
-            console.log(result)
-            navigation.navigate('Login')
-        } catch (err) {
-            console.log(err)
-        }
+        // await registerUser({
+        //     variables: {
+        //         name: name,
+        //         dob: dob,
+        //         email: email,
+        //         password: password,
+        //         phoneNumber: phoneNumber
+        //     }
+        // })
+        // console.log(result)
+        navigation.navigate('Login')
     }
 
     return (
