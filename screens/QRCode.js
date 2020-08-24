@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   TextInput,
+  Platform,
 } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 
