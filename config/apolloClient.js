@@ -49,7 +49,7 @@ const client = new ApolloClient({
 // })
 
 export const IS_LOGIN = gql`
-  query {
+  query IsLogin {
     isLogin {
       token
       email
@@ -71,8 +71,8 @@ export const LOCAL_USER = gql`
 `
 
 export const GET_DOCTORS = gql`
-  query {
-    doctors {
+  query GetDoctors($access_token:String) {
+    doctors(access_token: $access_token) {
       _id
       name
       polyclinic
@@ -81,8 +81,8 @@ export const GET_DOCTORS = gql`
 `
 
 export const GET_USERS = gql`
-  query {
-    users {
+  query GetUsers($access_token: String) {
+    users(access_token: $access_token) {
       _id
       name
       dob
@@ -95,8 +95,8 @@ export const GET_USERS = gql`
 `
 
 export const GET_APPOINTMENTS = gql`
-  query GetAppointments{
-    appointments {
+  query GetAppointments($access_token:String) {
+    appointments(access_token: $access_token) {
       _id
     userId
     doctorId

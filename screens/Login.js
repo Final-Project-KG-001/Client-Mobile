@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, TextInput } from 'react-native'
 import { useQuery, gql, useMutation } from '@apollo/client'
-import client, { IS_LOGIN, LOCAL_USER, GET_USERS } from '../config/apolloClient'
+import client, { IS_LOGIN } from '../config/apolloClient'
 
 const LOGIN_USER = gql`
     mutation LoginUser($email:String, $password:String) {
@@ -23,17 +23,13 @@ export default function Login({ navigation }) {
     const [ password, setPassword ] = useState('')
 
     const isLogin = useQuery(IS_LOGIN)
-    const localUser = useQuery(LOCAL_USER)
-    const users = useQuery(GET_USERS)
-    const [loginUser, result] = useMutation(LOGIN_USER)
-    const [loginAdmin, res] = useMutation(LOGIN_ADMIN)
-    // console.log(isLogin.data)
-    // console.log(localUser.data)
+    const [loginUser, resultLoginUser] = useMutation(LOGIN_USER)
+    const [loginAdmin, resultLoginAdmin] = useMutation(LOGIN_ADMIN)
 
     async function signIn(event) {
         event.preventDefault()
         try {
-            const user = users.data.users.find(x => (x.email === email))
+            // const user = users.data.users.find(x => (x.email === email))
             if (email === 'admin@mail.com') {
                 await loginAdmin({
                     variables: {
@@ -41,18 +37,7 @@ export default function Login({ navigation }) {
                         password: password
                     }
                 })
-                const data = await client.readQuery({
-                    query: IS_LOGIN
-                })
-                await client.writeQuery({
-                    query: IS_LOGIN,
-                    data: {
-                        isLogin: {
-                            token: res.data.loginAdmin.access_token,
-                            email: email
-                        }
-                    }
-                })
+                
             } else {
                 await loginUser({
                     variables: {
@@ -60,43 +45,38 @@ export default function Login({ navigation }) {
                         password: password
                     }
                 })
-                const data = await client.readQuery({
+            }
+            if (resultLoginAdmin.data && email === 'admin@mail.com') {
+                client.readQuery({
                     query: IS_LOGIN
                 })
-                await client.writeQuery({
+                client.writeQuery({
                     query: IS_LOGIN,
                     data: {
                         isLogin: {
-                            token: result.data.loginUser.access_token,
+                            token: resultLoginAdmin.data.loginAdmin.access_token,
                             email: email
                         }
                     }
                 })
-            }
-            if(users.data) {
-                const data = client.readQuery({
-                    query: LOCAL_USER
+                navigation.navigate('Admin')
+            } else if (resultLoginUser.data) {
+                client.readQuery({
+                    query: IS_LOGIN
                 })
-                await client.writeQuery({
-                    query: LOCAL_USER,
+                client.writeQuery({
+                    query: IS_LOGIN,
                     data: {
-                        localUser: {
-                            _id: user._id,
-                            name: user.name,
-                            email: email,
-                            dob: user.dob,
-                            phoneNumber: user.phoneNumber,
-                            role: user.role
+                        isLogin: {
+                            token: resultLoginUser.data.loginUser.access_token,
+                            email: email
                         }
                     }
                 })
-                if(user.role === 'admin') {
-                    navigation.navigate('Admin')
-                } else if (user.role === 'user') {
-                    navigation.navigate('Dashboard')
-                }
+                navigation.navigate('Dashboard')
             }
         } catch (err) {
+            console.log(err)
             console.log('internal server')
         }
     }
