@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, ImageBackground, TouchableOpacity, StyleSheet, TextInput } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, TextInput } from 'react-native'
 import { useQuery, gql, useMutation } from '@apollo/client'
 import client, { IS_LOGIN, LOCAL_USER, GET_USERS } from '../config/apolloClient'
 
@@ -31,13 +31,28 @@ export default function Login({ navigation }) {
         event.preventDefault()
         try {
             if (email === 'admin@mail.com') {
-                console.log(email, password)
                 loginAdmin({
                     variables: {
                         email: email,
                         password: password
                     }
                 })
+                console.log(res.data)
+                if(res.data) {
+                    client.readQuery({
+                        query: IS_LOGIN
+                    })
+                    client.writeQuery({
+                        query: IS_LOGIN,
+                        data: {
+                            isLogin: {
+                                token: res.data.loginAdmin.access_token,
+                                email: email
+                            }
+                        }
+                    })
+                }
+                console.log(email, password)
             } else {
                 loginUser({
                     variables: {
@@ -45,21 +60,24 @@ export default function Login({ navigation }) {
                         password: password
                     }
                 })
-            }
-            const user = users.data.users.find(x => (x.email === email))
-            if(result.data || res.data) {
-                client.readQuery({
-                    query: IS_LOGIN
-                })
-                client.writeQuery({
-                    query: IS_LOGIN,
-                    data: {
-                        isLogin: {
-                            token: result.data.loginUser.access_token,
-                            email: email
+                if(result.data) {
+                    client.readQuery({
+                        query: IS_LOGIN
+                    })
+                    client.writeQuery({
+                        query: IS_LOGIN,
+                        data: {
+                            isLogin: {
+                                token: result.data.loginUser.access_token,
+                                email: email
+                            }
                         }
-                    }
-                })
+                    })
+                }
+            }
+            
+            if(users.data) {
+                const user = users.data.users.find(x => (x.email === email))
                 client.readQuery({
                     query: LOCAL_USER
                 })
@@ -81,8 +99,6 @@ export default function Login({ navigation }) {
                 } else if (user.role === 'user') {
                     navigation.navigate('Dashboard')
                 }
-            } else {
-                console.log('email atau password salah')
             }
         } catch (err) {
             console.log('internal server')
