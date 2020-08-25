@@ -45,9 +45,9 @@ export default function Home({ route, navigation }) {
     return (
 
         <View style={ styles.container }>
-            {/* <View style={ styles.header }>
-                <Text style={ { fontSize: 20, fontWeight: 'bold' } }>QMe Board</Text>
-            </View> */}
+            <View style={styles.header}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Queue Info</Text>
+            </View>
             {
                 !hasQueueNumber ?
                     <TouchableOpacity style={ { ...styles.button, backgroundColor: 'blue' } }>
@@ -98,8 +98,7 @@ export default function Home({ route, navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        display: "flex",
-        marginTop: 60
+        display: "flex"
     },
     header: {
         backgroundColor: '#eae7dc',

@@ -1,18 +1,29 @@
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
-const MYIP = '172.20.10.3:4000'
+const MYIP = '192.168.100.157:4000'
 
 const client = new ApolloClient({
-  uri: "http://54.254.218.69:4000/",
+  uri: `http://${MYIP}`,
   cache: new InMemoryCache()
 })
-
-
 
 export const IS_LOGIN = gql`
   query {
     isLogin {
       token
       email
+    }
+  }
+`
+
+export const LOCAL_USER = gql`
+  query {
+    localUser {
+      _id
+      name
+      email
+      dob
+      phoneNumber
+      role
     }
   }
 `
@@ -69,6 +80,20 @@ client.writeQuery({
     isLogin: {
       token: "",
       email: ""
+    }
+  }
+})
+
+client.writeQuery({
+  query: LOCAL_USER,
+  data: {
+    localUser: {
+      _id: "",
+      name: "",
+      email: "",
+      dob: "",
+      phoneNumber: "",
+      role: ""
     }
   }
 })

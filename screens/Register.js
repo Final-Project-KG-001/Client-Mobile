@@ -40,17 +40,15 @@ export default function Register({ navigation }) {
 
     return (
         <View style={ styles.container }>
-            <View style={{ ...StyleSheet.absoluteFill }}>
-                <ImageBackground source={require('../assets/Rainbow-Pattern.jpg')} style={{ flex: 1 }}/>
-            </View>
             <View>
                 <Text style={{ fontWeight: 'bold', fontSize: 30, alignSelf: 'center' }}>Register Page</Text>
                 <TextInput onChangeText={(text) => setName(text)} placeholder="Your Name" style={styles.textInput} placeholderTextColor="black"/>
-                <TextInput onChangeText={(text) => setDob(text)} placeholder="Date of Birth" style={styles.textInput} placeholderTextColor="black"/>
+                <TextInput onChangeText={(text) => setDob(text)} placeholder="Date of Birth" style={styles.textInput} placeholderTextColor="black">
+                </TextInput>
                 <TextInput onChangeText={(text) => setEmail(text)} placeholder="Email" style={styles.textInput} placeholderTextColor="black"/>
                 <TextInput onChangeText={(text) => setPassword(text)} placeholder="Password" style={styles.textInput} placeholderTextColor="black"/>
                 <TextInput onChangeText={(text) => setPhoneNumber(text)} placeholder="Phone Number" style={styles.textInput} placeholderTextColor="black"/>
-                <TouchableOpacity onPress={register} style={{ ...styles.button, backgroundColor: 'blue' }}>
+                <TouchableOpacity onPress={register} style={{ ...styles.button, backgroundColor: '#eb4d4b' }}>
                     <Text style={{ ...styles.buttonText, color: 'white' }}>Submit</Text>
                 </TouchableOpacity>
             </View>
@@ -61,11 +59,10 @@ export default function Register({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white',
+        backgroundColor:"#2d3853",
         justifyContent: 'flex-end'
     },
     button: {
-        backgroundColor: 'white',
         height: 50,
         marginHorizontal: 20,
         borderRadius: 35,
@@ -79,13 +76,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     textInput: {
-        backgroundColor: 'white',
-        height: 50,
+        backgroundColor: '#465881',
+        height: 40,
         borderRadius: 25,
-        borderWidth: 1,
         marginHorizontal: 20,
         paddingLeft: 10,
-        marginVertical: 5,
-        borderColor: 'black'
+        marginVertical: 5
     }
 });
