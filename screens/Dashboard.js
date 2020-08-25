@@ -10,7 +10,7 @@ import HomeNavigation from './HomeNavigation'
 
 export default function Dashboard() {
     return (
-        <Tab.Navigator barStyle={{ backgroundColor: 'white' }} screenOptions={({ route }) => ({
+        <Tab.Navigator barStyle={ { backgroundColor: 'white' } } screenOptions={ ({ route }) => ({
             tabBarIcon: ({ color }) => {
                 let iconName
                 if (route.name == 'Home') {
@@ -20,12 +20,12 @@ export default function Dashboard() {
                 } else if (route.name == 'Profile') {
                     iconName = 'ios-person'
                 }
-                return <Ionicons name={iconName} color={color} size={25} />
+                return <Ionicons name={ iconName } color={ color } size={ 25 } />
             }
-        })}>
-            <Tab.Screen name="Home" component={HomeNavigation} />
-            <Tab.Screen name="ListDoctor" component={ListDoctor} />
-            <Tab.Screen name="Profile" component={Profile} />
+        }) }>
+            <Tab.Screen name="Home" component={ HomeNavigation } />
+            <Tab.Screen name="ListDoctor" component={ ListDoctor } />
+            <Tab.Screen name="Profile" component={ Profile } />
         </Tab.Navigator>
     )
 }

@@ -1,10 +1,12 @@
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
-const MYIP = '192.168.100.157:4000'
+const MYIP = '172.20.10.3:4000'
 
 const client = new ApolloClient({
-  uri: `http://${MYIP}`,
+  uri: "http://54.254.218.69:4000/",
   cache: new InMemoryCache()
 })
+
+
 
 export const IS_LOGIN = gql`
   query {
@@ -25,7 +27,7 @@ export const GET_DOCTORS = gql`
   }
 `
 
-export const GET_Users = gql`
+export const GET_USERS = gql`
   query {
     users {
       _id
@@ -35,6 +37,28 @@ export const GET_Users = gql`
       password
       phoneNumber
       role
+    }
+  }
+`
+
+export const GET_APPOINTMENTS = gql`
+  query GetAppointments{
+    appointments {
+      _id
+    userId
+    doctorId
+    queueNumber
+    status
+    createdAt
+    user{
+      email
+      name
+    }
+    doctor{
+      _id
+      name
+      polyclinic
+    }
     }
   }
 `

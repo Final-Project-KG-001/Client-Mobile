@@ -12,35 +12,42 @@ const LOGIN = gql`
 `
 
 export default function Login({ navigation }) {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const [ email, setEmail ] = useState('')
+    const [ password, setPassword ] = useState('')
 
     const isLogin = useQuery(IS_LOGIN)
-    const [loginUser, result] = useMutation(LOGIN)
+    const [ loginUser, result ] = useMutation(LOGIN)
 
-    function signIn(event) {
-        event.preventDefault()
-        loginUser({
-            variables: {
-                email: email,
-                password: password
-            }
-        })
-        if(result.data) {
-            client.readQuery({
-                query: IS_LOGIN
-            })
-            client.writeQuery({
-                query: IS_LOGIN,
-                data: {
-                    isLogin: {
-                        token: result.data.loginUser.access_token,
-                        email: email
-                    }
+    async function signIn(event) {
+
+        try {
+            await loginUser({
+                variables: {
+                    email: email,
+                    password: password
                 }
             })
-            navigation.navigate('Dashboard')
+
+            if (result.data) {
+                client.readQuery({
+                    query: IS_LOGIN
+                })
+                client.writeQuery({
+                    query: IS_LOGIN,
+                    data: {
+                        isLogin: {
+                            token: result.data.loginUser.access_token,
+                            email: email
+                        }
+                    }
+                })
+                navigation.navigate('Dashboard')
+
+            }
+        } catch (err) {
+            console.log(err)
         }
+
     }
     function register(event) {
         event.preventDefault()
@@ -55,18 +62,18 @@ export default function Login({ navigation }) {
 
     return (
         <View style={ styles.container }>
-            <View style={{ ...StyleSheet.absoluteFill }}>
-                <ImageBackground source={require('../assets/Rainbow-Pattern.jpg')} style={styles.imgBackground}/>
+            <View style={ { ...StyleSheet.absoluteFill } }>
+                <ImageBackground source={ require('../assets/Rainbow-Pattern.jpg') } style={ styles.imgBackground } />
             </View>
-            <View style={{ marginBottom: 30 }}>
-                <Text style={{ fontWeight: 'bold', fontSize: 30, alignSelf: 'center' }}>Login Page</Text>
-                <TextInput onChangeText={(text) => setEmail(text)} placeholder="Email" style={styles.textInput} placeholderTextColor="black"/>
-                <TextInput onChangeText={(text) => setPassword(text)} placeholder="Password" style={styles.textInput} placeholderTextColor="black"/>
-                <TouchableOpacity onPress={signIn} style={{ ...styles.button, backgroundColor: 'blue' }}>
-                    <Text style={{ ...styles.buttonText, color: 'white' }}>Login</Text>
+            <View style={ { marginBottom: 30 } }>
+                <Text style={ { fontWeight: 'bold', fontSize: 30, alignSelf: 'center' } }>Login Page</Text>
+                <TextInput onChangeText={ (text) => setEmail(text) } placeholder="Email" style={ styles.textInput } placeholderTextColor="black" />
+                <TextInput onChangeText={ (text) => setPassword(text) } placeholder="Password" style={ styles.textInput } placeholderTextColor="black" />
+                <TouchableOpacity onPress={ signIn } style={ { ...styles.button, backgroundColor: 'blue' } }>
+                    <Text style={ { ...styles.buttonText, color: 'white' } }>Login</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={register} style={{ ...styles.button, backgroundColor: 'red' }}>
-                    <Text style={{ ...styles.buttonText, color: 'white' }}>Register</Text>
+                <TouchableOpacity onPress={ register } style={ { ...styles.button, backgroundColor: 'red' } }>
+                    <Text style={ { ...styles.buttonText, color: 'white' } }>Register</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -95,7 +102,7 @@ const styles = StyleSheet.create({
         marginVertical: 5
     },
     buttonText: {
-        fontSize:20,
+        fontSize: 20,
         fontWeight: 'bold'
     },
     textInput: {
