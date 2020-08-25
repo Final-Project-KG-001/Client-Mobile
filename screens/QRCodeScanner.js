@@ -30,8 +30,8 @@ export default function QRCodeScanner() {
 
   const [appointments, setAppointment] = useState([]);
 
-  const [addDental] = useMutation(ADD_DENTAL);
-  const [addGeneral] = useMutation(ADD_GENERAL);
+  const [addDental, resultDental] = useMutation(ADD_DENTAL);
+  const [addGeneral, resultGeneral] = useMutation(ADD_GENERAL);
 
   useEffect(() => {
     (async () => {
