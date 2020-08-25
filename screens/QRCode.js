@@ -10,16 +10,16 @@ import {
 } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import { useQuery } from "@apollo/client";
-import { IS_LOGIN } from "../config/apolloClient";
+import { LOCAL_USER } from "../config/apolloClient";
 
 export default function QRCodeScreen() {
   const [showCode, setShowCode] = useState(false);
   const [userId, setUserId] = useState('');
-  const { error, loading, data } = useQuery(IS_LOGIN);
+  const { error, loading, data } = useQuery(LOCAL_USER);
 
   useEffect(() => {
     if(!loading && data) {
-      setUserId(data.isLogin._id);
+      setUserId(data.localUser._id);
     }
   })
 
