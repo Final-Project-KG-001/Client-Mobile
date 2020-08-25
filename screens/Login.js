@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, ImageBackground, TouchableOpacity, StyleSheet, TextInput } from 'react-native'
 import { useQuery, gql, useMutation } from '@apollo/client'
-import client, { IS_LOGIN } from '../config/apolloClient'
+import client, { IS_LOGIN, LOCAL_USER, GET_USERS } from '../config/apolloClient'
 
-const LOGIN = gql`
-    mutation Login($email:String, $password:String) {
+const LOGIN_USER = gql`
+    mutation LoginUser($email:String, $password:String) {
         loginUser(email: $email, password:$password) {
+            access_token
+        }
+    }
+`
+const LOGIN_ADMIN = gql`
+    mutation LoginAdmin($email:String, $password:String) {
+        loginAdmin(email: $email, password:$password) {
             access_token
         }
     }
@@ -16,19 +23,31 @@ export default function Login({ navigation }) {
     const [ password, setPassword ] = useState('')
 
     const isLogin = useQuery(IS_LOGIN)
-    const [ loginUser, result ] = useMutation(LOGIN)
+    const users = useQuery(GET_USERS)
+    const [loginUser, result] = useMutation(LOGIN_USER)
+    const [loginAdmin, res] = useMutation(LOGIN_ADMIN)
 
     async function signIn(event) {
-
+        event.preventDefault()
         try {
-            await loginUser({
-                variables: {
-                    email: email,
-                    password: password
-                }
-            })
-
-            if (result.data) {
+            if (email === 'admin@mail.com') {
+                console.log(email, password)
+                loginAdmin({
+                    variables: {
+                        email: email,
+                        password: password
+                    }
+                })
+            } else {
+                loginUser({
+                    variables: {
+                        email: email,
+                        password: password
+                    }
+                })
+            }
+            const user = users.data.users.find(x => (x.email === email))
+            if(result.data || res.data) {
                 client.readQuery({
                     query: IS_LOGIN
                 })
@@ -41,13 +60,33 @@ export default function Login({ navigation }) {
                         }
                     }
                 })
-                navigation.navigate('Dashboard')
-
+                client.readQuery({
+                    query: LOCAL_USER
+                })
+                client.writeQuery({
+                    query: LOCAL_USER,
+                    data: {
+                        localUser: {
+                            _id: user._id,
+                            name: user.name,
+                            email: email,
+                            dob: user.dob,
+                            phoneNumber: user.phoneNumber,
+                            role: user.role
+                        }
+                    }
+                })
+                if(user.role === 'admin') {
+                    navigation.navigate('Admin')
+                } else if (user.role === 'user') {
+                    navigation.navigate('Dashboard')
+                }
+            } else {
+                console.log('email atau password salah')
             }
         } catch (err) {
-            console.log(err)
+            console.log('internal server')
         }
-
     }
     function register(event) {
         event.preventDefault()
@@ -56,24 +95,25 @@ export default function Login({ navigation }) {
 
     useEffect(() => {
         if (isLogin.data.isLogin.token !== "") {
-            navigation.navigate('Dashboard')
+            if(isLogin.data.isLogin.email === 'admin@mail.com') {
+                navigation.navigate('Admin')
+            } else {
+                navigation.navigate('Dashboard')
+            }
         }
     })
 
     return (
         <View style={ styles.container }>
-            <View style={ { ...StyleSheet.absoluteFill } }>
-                <ImageBackground source={ require('../assets/Rainbow-Pattern.jpg') } style={ styles.imgBackground } />
-            </View>
-            <View style={ { marginBottom: 30 } }>
-                <Text style={ { fontWeight: 'bold', fontSize: 30, alignSelf: 'center' } }>Login Page</Text>
-                <TextInput onChangeText={ (text) => setEmail(text) } placeholder="Email" style={ styles.textInput } placeholderTextColor="black" />
-                <TextInput onChangeText={ (text) => setPassword(text) } placeholder="Password" style={ styles.textInput } placeholderTextColor="black" />
-                <TouchableOpacity onPress={ signIn } style={ { ...styles.button, backgroundColor: 'blue' } }>
-                    <Text style={ { ...styles.buttonText, color: 'white' } }>Login</Text>
+            <View style={{ marginBottom: 30 }}>
+                <Text style={{ fontWeight: 'bold', fontSize: 30, alignSelf: 'center' }}>Login Page</Text>
+                <TextInput onChangeText={(text) => setEmail(text)} placeholder="Email" placeholderTextColor="#003f5c" style={styles.textInput}/>
+                <TextInput onChangeText={(text) => setPassword(text)}  placeholderTextColor="#003f5c" placeholder="Password" style={styles.textInput}/>
+                <TouchableOpacity onPress={signIn} style={{ ...styles.button, backgroundColor: '#eb4d4b' }}>
+                    <Text style={{ ...styles.buttonText, color: 'white' }}>LOGIN</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={ register } style={ { ...styles.button, backgroundColor: 'red' } }>
-                    <Text style={ { ...styles.buttonText, color: 'white' } }>Register</Text>
+                <TouchableOpacity onPress={register} style={{ ...styles.button}}>
+                    <Text style={{ ...styles.buttonText, color: 'white' }}>Signup</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -84,7 +124,7 @@ export default function Login({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white',
+        backgroundColor:"#2d3853",
         justifyContent: 'flex-end'
     },
     imgBackground: {
@@ -93,7 +133,6 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     button: {
-        backgroundColor: 'white',
         height: 50,
         marginHorizontal: 20,
         borderRadius: 35,
@@ -102,17 +141,15 @@ const styles = StyleSheet.create({
         marginVertical: 5
     },
     buttonText: {
-        fontSize: 20,
+        fontSize:20,
         fontWeight: 'bold'
     },
     textInput: {
-        backgroundColor: 'white',
-        height: 50,
+        backgroundColor: '#465881',
+        height: 40,
         borderRadius: 25,
-        borderWidth: 2,
         marginHorizontal: 20,
         paddingLeft: 10,
-        marginVertical: 5,
-        borderColor: 'black'
+        marginVertical: 5
     }
 });

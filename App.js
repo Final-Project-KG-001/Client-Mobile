@@ -11,6 +11,7 @@ import Dashboard from "./screens/Dashboard";
 import LandingPage from "./screens/LandingPage";
 import Login from "./screens/Login";
 import Register from "./screens/Register";
+import Admin from "./screens/Admin";
 import QRCode from "./screens/QRCode";
 import QRCodeScanner from "./screens/QRCodeScanner";
 
@@ -34,6 +35,7 @@ export default function App() {
           <Stack.Screen name="Register" component={Register} />
           <Stack.Screen name="QRCode" component={QRCode} />
           <Stack.Screen name="QRCodeScan" component={QRCodeScanner} />
+          <Stack.Screen name="Admin" component={Admin} />
         </Stack.Navigator>
       </NavigationContainer>
     </ApolloProvider>
