@@ -1,27 +1,34 @@
 import React from 'react'
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, Image, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
 import { useQuery, gql } from '@apollo/client'
-import client, { LOGIN, GET_Users } from '../config/apolloClient'
+import client, { IS_LOGIN, GET_USERS } from '../config/apolloClient'
 
 import DetailProfile from '../components/DetailProfile'
 import FormEditProfile from '../components/FormEditProfile'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function Profile({ navigation }) {
-    const users = useQuery(GET_Users)
-    console.log(users.data.localUsers)
+    const users = useQuery(GET_USERS)
+    const isLogin = useQuery(IS_LOGIN)
+
+    let user = null
+
+    if (users.data && isLogin.data) {
+        user = users.data.users.filter(x => x.email === isLogin.data.isLogin.email)
+    }
+    console.log(user)
 
     function logout(event) {
         event.preventDefault()
-        const {login} = client.readQuery({
-            query: LOGIN
+        client.readQuery({
+            query: IS_LOGIN
         })
         client.writeQuery({
-            query: LOGIN,
+            query: IS_LOGIN,
             data: {
-                login: {
+                isLogin: {
                     token: "",
-                    isLogin: false,
-                    email: ''
+                    email: ""
                 }
             }
         })
@@ -29,21 +36,27 @@ export default function Profile({ navigation }) {
     }
 
     return (
-        <View style={ styles.container }>
-            <View style={styles.header}>
-                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Customer Name</Text>
+        <SafeAreaView>
+            <View style={ styles.container }>
+                { users.data &&
+                    <View>
+                        <View style={ styles.header }>
+                            <Text style={ { fontSize: 20, fontWeight: 'bold' } }>Fiah</Text>
+                        </View>
+                        <View style={ { marginTop: 40, marginHorizontal: 10 } }>
+                            <Image source={ require('../assets/dummy.png') } style={ {
+                                height: 80, width: 80, borderRadius: 40, borderColor: 'white', borderWidth: 3
+                            } } />
+                            {/* <DetailProfile user={ user[ 0 ] } /> */ }
+                            {/* <FormEditProfile/> */ }
+                            <TouchableOpacity onPress={ logout } style={ { ...styles.button } }>
+                                <Text style={ { fontSize: 20, fontWeight: 'bold', color: 'white' } }>Logout</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                }
             </View>
-            <View style={{ marginTop: 40, marginHorizontal: 10 }}>
-                <Image source={require('../assets/dummy.png')} style={{
-                    height: 80, width: 80, borderRadius: 40, borderColor: 'white', borderWidth: 3
-                }}/>
-                <DetailProfile/>
-                {/* <FormEditProfile/> */}
-                <TouchableOpacity onPress={logout} style={{ ...styles.button }}>
-                    <Text style={{ fontSize:20, fontWeight: 'bold', color: 'white' }}>Logout</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
+        </SafeAreaView>
     )
 }
 
@@ -57,8 +70,8 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         right: 0,
-        backgroundColor: '#e66767',
-        height: 80,
+        // backgroundColor: '#e66767',
+        height: 60,
         paddingTop: 40,
         paddingLeft: 100
     },

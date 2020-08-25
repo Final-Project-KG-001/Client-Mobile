@@ -1,33 +1,11 @@
-import React, { useEffect } from "react";
-import {
-  View,
-  Text,
-  ImageBackground,
-  Dimensions,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
-import { useQuery, gql } from "@apollo/client";
-import { LOGIN } from "../config/apolloClient";
+import React from 'react'
+import { View, Text, ImageBackground, TouchableOpacity, StyleSheet } from 'react-native'
 
 export default function LandingPage({ navigation }) {
-  const login = useQuery(LOGIN);
-
-  function toDashboard(event) {
-    event.preventDefault();
-    navigation.navigate("Dashboard");
-  }
-
   function toLoginPage(event) {
     event.preventDefault();
     navigation.navigate("Login");
   }
-
-  if (login) {
-    login.refetch();
-  }
-  console.log(login.data);
-
   function toQR(event) {
     event.preventDefault();
     navigation.navigate("QRCode");
@@ -39,61 +17,34 @@ export default function LandingPage({ navigation }) {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={{ ...StyleSheet.absoluteFill }}>
-        <ImageBackground
-          source={require("../assets/Rainbow-Pattern.jpg")}
-          style={styles.imgBackground}
-        >
-          <Text style={{ fontWeight: "bold", fontSize: 30 }}>Landing Page</Text>
-          <Text style={{ fontSize: 20, textAlign: "center" }}>
-            lorem ipsum quia dolor sit amet, consectetur, adipisci
-            velit...dsdwaddsdwd
-          </Text>
+    <View style={ styles.container }>
+      <View style={ { ...StyleSheet.absoluteFill } }>
+        <ImageBackground source={ require('../assets/Rainbow-Pattern.jpg') } style={ styles.imgBackground }>
+          <Text style={ { fontWeight: 'bold', fontSize: 30 } }>Landing Page</Text>
+          <Text style={ { fontSize: 20, textAlign: 'center' } }>lorem ipsum quia dolor sit amet, consectetur, adipisci velit...dsdwaddsdwd</Text>
         </ImageBackground>
       </View>
-      {login.data && (
-        <View>
-          {login.data.login.isLogin && (
-            <TouchableOpacity
-              onPress={toDashboard}
-              style={{ ...styles.button, backgroundColor: "blue" }}
-            >
-              <Text style={{ ...styles.buttonText, color: "white" }}>
-                Click to Start
-              </Text>
-            </TouchableOpacity>
-          )}
-          {!login.data.login.isLogin && (
-            <TouchableOpacity
-              onPress={toLoginPage}
-              style={{ ...styles.button, backgroundColor: "blue" }}
-            >
-              <Text style={{ ...styles.buttonText, color: "white" }}>
-                Click to Start
-              </Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      )}
+      <TouchableOpacity onPress={ toLoginPage } style={ { ...styles.button, backgroundColor: 'blue' } }>
+        <Text style={ { ...styles.buttonText, color: 'white' } }>Click to Start</Text>
+      </TouchableOpacity>
       <View>
         <TouchableOpacity
-          onPress={toQR}
-          style={{ ...styles.button, backgroundColor: "blue" }}
+          onPress={ toQR }
+          style={ { ...styles.button, backgroundColor: "blue" } }
         >
-          <Text style={{ ...styles.buttonText, color: "white" }}>QRCode</Text>
+          <Text style={ { ...styles.buttonText, color: "white" } }>QRCode</Text>
         </TouchableOpacity>
       </View>
       <View>
         <TouchableOpacity
-          onPress={toQRScan}
-          style={{ ...styles.button, backgroundColor: "blue" }}
+          onPress={ toQRScan }
+          style={ { ...styles.button, backgroundColor: "blue" } }
         >
-          <Text style={{ ...styles.buttonText, color: "white" }}>Scan QR Code</Text>
+          <Text style={ { ...styles.buttonText, color: "white" } }>Scan QR Code</Text>
         </TouchableOpacity>
       </View>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -119,5 +70,5 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 20,
     fontWeight: "bold",
-  },
+  }
 });

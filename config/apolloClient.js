@@ -1,13 +1,25 @@
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
+const MYIP = '172.20.10.3:4000'
 
 const client = new ApolloClient({
-  uri: 'http://localhost:4000',
+  uri: "http://54.254.218.69:4000/",
   cache: new InMemoryCache()
 })
 
+
+
+export const IS_LOGIN = gql`
+  query {
+    isLogin {
+      token
+      email
+    }
+  }
+`
+
 export const GET_DOCTORS = gql`
   query {
-    localDoctors {
+    doctors {
       _id
       name
       polyclinic
@@ -15,31 +27,9 @@ export const GET_DOCTORS = gql`
   }
 `
 
-export const LOGIN = gql`
+export const GET_USERS = gql`
   query {
-    login {
-      token
-      isLogin
-      email
-    }
-  }
-`
-
-export const GET_APPOINTMENT = gql`
-  query {
-    localAppointment {
-      _id
-      queueNumber
-      status
-      user
-      doctor
-    }
-  }
-`
-
-export const GET_Users = gql`
-  query {
-    localUsers {
+    users {
       _id
       name
       dob
@@ -51,91 +41,37 @@ export const GET_Users = gql`
   }
 `
 
-client.writeQuery({
-  query: GET_DOCTORS,
-  data: {
-    localDoctors: [
-      {
-        _id: 1,
-        name: "sandi",
-        polyclinic: "umum"
-      },
-      {
-        _id: 2,
-        name: "fiah",
-        polyclinic: "tht"
-      }
-    ]
+export const GET_APPOINTMENTS = gql`
+  query GetAppointments{
+    appointments {
+      _id
+    userId
+    doctorId
+    queueNumber
+    status
+    createdAt
+    user{
+      email
+      name
+    }
+    doctor{
+      _id
+      name
+      polyclinic
+    }
+    }
   }
-})
+`
 
 client.writeQuery({
-  query: GET_Users,
+  query: IS_LOGIN,
   data: {
-    localUsers: [
-      {
-        _id: 1,
-        name: 'user1',
-        dob: '280920',
-        email: 'user1@mail.com',
-        password: 'password',
-        phoneNumber: '08912345678',
-        role: 'user'
-      },
-      {
-        _id: 2,
-        name: 'user2',
-        dob: '280920',
-        email: 'user2@mail.com',
-        password: 'password',
-        phoneNumber: '08912345678',
-        role: 'user'
-      }
-    ]
-  }
-})
-
-client.writeQuery({
-  query: LOGIN,
-  data: {
-    login: {
+    isLogin: {
       token: "",
-      isLogin: false,
       email: ""
     }
   }
 })
 
-client.writeQuery({
-  query: GET_APPOINTMENT,
-  data: {
-    localAppointment: [
-      {
-        _id: 1,
-        queueNumber: 1,
-        status: "onProcess",
-        user: {
-          email: "user@mail.com"
-        },
-        doctor: {
-          name: "sandi",
-          polyclinic: "umum"
-        }
-      },
-      {
-        _id: 2,
-        queueNumber: 1,
-        status: "waiting",
-        user: {
-          email: "user1@mail.com"
-        },
-        doctor: {
-          name: "sandi",
-          polyclinic: "umum"
-        }
-      }
-    ]
-  }
-})
-
 export default client
+
