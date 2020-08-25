@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, ImageBackground, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Text, ImageBackground, TouchableOpacity, StyleSheet, Image } from 'react-native'
 
 export default function LandingPage({ navigation }) {
   function toLoginPage(event) {
@@ -9,14 +9,14 @@ export default function LandingPage({ navigation }) {
 
   return (
     <View style={ styles.container }>
-      <View style={{ ...StyleSheet.absoluteFill }}>
-          <ImageBackground source={require('../assets/Rainbow-Pattern.jpg')} style={styles.imgBackground}>
-              <Text style={{ fontWeight: 'bold', fontSize: 30 }}>Landing Page</Text>
-              <Text style={{ fontSize: 20, textAlign: 'center' }}>lorem ipsum quia dolor sit amet, consectetur, adipisci velit</Text>
-          </ImageBackground>
+      <View style={ { ...StyleSheet.absoluteFill, alignItems: "center", marginTop: 100 } }>
+        <Image source={ require('../assets/doctor.png') } style={ { width: 400, height: 330 } } />
+        <Text style={ { fontSize: 25, textAlign: 'center', marginTop: 20 } }>Say good bye to snaky line.</Text>
+        <Text style={ { fontWeight: 'bold', fontSize: 30, marginBottom: 10, color: "#ffa931" } }>QME is here!</Text>
+        <Text style={ { fontSize: 20, textAlign: 'center', marginBottom: 20, color: "#838383" } }>Help people managing queue, no more time wasting standing in line.</Text>
       </View>
-      <TouchableOpacity onPress={toLoginPage} style={{ ...styles.button, backgroundColor: 'blue' }}>
-          <Text style={{ ...styles.buttonText, color: 'white' }}>Click to Start</Text>
+      <TouchableOpacity onPress={ toLoginPage } style={ { ...styles.button, backgroundColor: '#3b6978' } }>
+        <Text style={ { ...styles.buttonText, color: 'white' } }>Getting Start</Text>
       </TouchableOpacity>
     </View>
   )
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    justifyContent: "flex-end",
+    justifyContent: "center",
   },
   imgBackground: {
     flex: 1,
@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginVertical: 5,
     marginBottom: 30,
+    marginTop: 500
   },
   buttonText: {
     fontSize: 20,

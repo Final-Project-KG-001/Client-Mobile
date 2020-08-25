@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, TextInput } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, Image } from 'react-native'
 import { useQuery, gql, useMutation } from '@apollo/client'
 import client, { IS_LOGIN, LOCAL_USER, GET_USERS } from '../config/apolloClient'
-
 const LOGIN_USER = gql`
     mutation LoginUser($email:String, $password:String) {
         loginUser(email: $email, password:$password) {
@@ -24,8 +23,8 @@ export default function Login({ navigation }) {
 
     const isLogin = useQuery(IS_LOGIN)
     const users = useQuery(GET_USERS)
-    const [loginUser, result] = useMutation(LOGIN_USER)
-    const [loginAdmin, res] = useMutation(LOGIN_ADMIN)
+    const [ loginUser, result ] = useMutation(LOGIN_USER)
+    const [ loginAdmin, res ] = useMutation(LOGIN_ADMIN)
 
     async function signIn(event) {
         event.preventDefault()
@@ -38,7 +37,7 @@ export default function Login({ navigation }) {
                     }
                 })
                 console.log(res.data)
-                if(res.data) {
+                if (res.data) {
                     client.readQuery({
                         query: IS_LOGIN
                     })
@@ -52,7 +51,7 @@ export default function Login({ navigation }) {
                         }
                     })
                 }
-                console.log(email, password)
+                // console.log(email, password)
             } else {
                 loginUser({
                     variables: {
@@ -60,7 +59,7 @@ export default function Login({ navigation }) {
                         password: password
                     }
                 })
-                if(result.data) {
+                if (result.data) {
                     client.readQuery({
                         query: IS_LOGIN
                     })
@@ -75,8 +74,8 @@ export default function Login({ navigation }) {
                     })
                 }
             }
-            
-            if(users.data) {
+
+            if (users.data) {
                 const user = users.data.users.find(x => (x.email === email))
                 client.readQuery({
                     query: LOCAL_USER
@@ -94,14 +93,14 @@ export default function Login({ navigation }) {
                         }
                     }
                 })
-                if(user.role === 'admin') {
+                if (user.role === 'admin') {
                     navigation.navigate('Admin')
                 } else if (user.role === 'user') {
                     navigation.navigate('Dashboard')
                 }
             }
         } catch (err) {
-            console.log('internal server')
+            // console.log('internal server')
         }
     }
     function register(event) {
@@ -111,7 +110,7 @@ export default function Login({ navigation }) {
 
     useEffect(() => {
         if (isLogin.data.isLogin.token !== "") {
-            if(isLogin.data.isLogin.email === 'admin@mail.com') {
+            if (isLogin.data.isLogin.email === 'admin@mail.com') {
                 navigation.navigate('Admin')
             } else {
                 navigation.navigate('Dashboard')
@@ -121,16 +120,19 @@ export default function Login({ navigation }) {
 
     return (
         <View style={ styles.container }>
-            <View style={{ marginBottom: 30 }}>
-                <Text style={{ fontWeight: 'bold', fontSize: 30, alignSelf: 'center' }}>Login Page</Text>
-                <TextInput onChangeText={(text) => setEmail(text)} placeholder="Email" placeholderTextColor="#003f5c" style={styles.textInput}/>
-                <TextInput onChangeText={(text) => setPassword(text)}  placeholderTextColor="#003f5c" placeholder="Password" style={styles.textInput}/>
-                <TouchableOpacity onPress={signIn} style={{ ...styles.button, backgroundColor: '#eb4d4b' }}>
-                    <Text style={{ ...styles.buttonText, color: 'white' }}>LOGIN</Text>
+            <View style={ styles.div_login }>
+                <Image source={ require('../assets/loginicon.png') } style={ styles.login_icon } />
+                <TextInput onChangeText={ (text) => setEmail(text) } placeholder="Email" placeholderTextColor="#838383" style={ styles.textInput } />
+                <TextInput secureTextEntry={ true } onChangeText={ (text) => setPassword(text) } placeholderTextColor="#838383" type="password" placeholder="Password" style={ styles.textInput } />
+                <TouchableOpacity onPress={ signIn } style={ {
+                    ...styles.button, backgroundColor: '#ea8685',
+                    marginTop: 20,
+                } }>
+                    <Text style={ { ...styles.buttonText } }>LOGIN</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={register} style={{ ...styles.button}}>
-                    <Text style={{ ...styles.buttonText, color: 'white' }}>Signup</Text>
-                </TouchableOpacity>
+                <View style={ { ...styles.button, marginBottom: 20 } }>
+                    <Text style={ { ...styles.buttonText, color: "#797a7e", fontSize: 15 } }>Not registered? <Text onPress={ register } style={ { color: "#eebb4d" } }>Create an account!</Text></Text>
+                </View>
             </View>
         </View>
     )
@@ -140,8 +142,25 @@ export default function Login({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor:"#2d3853",
-        justifyContent: 'flex-end'
+        // backgroundColor: "#eae7dc",
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    div_login: {
+        backgroundColor: "#dee3e2",
+        height: 400,
+        width: 350,
+        justifyContent: "center",
+        borderRadius: 20,
+        display: "flex",
+        alignItems: "center",
+        shadowColor: "#6e6d6d",
+        shadowOffset: {
+            width: 15,
+            height: 15
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
     },
     imgBackground: {
         flex: 1,
@@ -149,7 +168,8 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     button: {
-        height: 50,
+        width: 300,
+        height: 40,
         marginHorizontal: 20,
         borderRadius: 35,
         alignItems: 'center',
@@ -157,15 +177,25 @@ const styles = StyleSheet.create({
         marginVertical: 5
     },
     buttonText: {
-        fontSize:20,
+        color: "white",
+        fontSize: 20,
         fontWeight: 'bold'
     },
     textInput: {
-        backgroundColor: '#465881',
+        backgroundColor: 'white',
+        marginTop: 10,
         height: 40,
         borderRadius: 25,
         marginHorizontal: 20,
         paddingLeft: 10,
-        marginVertical: 5
+        marginVertical: 5,
+        width: 300,
+    },
+    login_icon: {
+        marginTop: 20,
+        marginBottom: 20,
+        width: 100,
+        height: 100,
     }
+
 });
