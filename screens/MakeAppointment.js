@@ -5,7 +5,7 @@ import { GET_DOCTORS, GET_APPOINTMENTS } from '../config/apolloClient'
 import { Picker } from 'react-native-picker-dropdown'
 
 const ADD_APPOINTMENT = gql`
-    mutation AddAppointment($doctorId:ID, $queueNumber:String) {
+    mutation AddAppointment($doctorId:ID, $queueNumber:Int) {
         addAppointment(doctorId: $doctorId, queueNumber:$queueNumber) {
             message
         }
@@ -20,38 +20,35 @@ export default function MakeAppointment({ navigation }) {
 
     const doctors = useQuery(GET_DOCTORS)
     const appointments = useQuery(GET_APPOINTMENTS)
-    // console.log(appointments.data.appointments)
     const [ addAppointment, res ] = useMutation(ADD_APPOINTMENT)
-
-    // console.log(doctors.data)
 
     async function submit() {
         try {
             const sortByPoly = appointments.data.appointments.filter(x => (x.doctor[0].polyclinic === itemValue.polyclinic))
-            console.log(sortByPoly)
+            // console.log(sortByPoly)
             if (sortByPoly.length > 0) {
                 // console.log('jalan yang ada', sortByPoly.length)
-                console.log(Number(sortByPoly.length + 1), itemValue._id)
+                // console.log(Number(sortByPoly.length + 1), itemValue._id)
                 await addAppointment({
                     variables: {
                         doctorId: itemValue._id,
-                        queueNumber: sortByPoly.length + 1
+                        queueNumber: Number(sortByPoly.length + 1)
                     },
                     refetchQueries: [ "GetAppointments" ]
                 })
                 console.log("ini berhasilll=================", res)
                 navigation.navigate('Homepage')
             } else {
-                console.log('jalan yang ga ada')
-                // await AddAppointment({
-                //     variables: {
-                //         doctorId: itemValue._id,
-                //         queueNumber: Number(1)
-                //     },
-                //     refetchQueries: [ "GetAppointments" ]
-                // })
-                // console.log("ini berhasilll=================", res)
-                // navigation.navigate('Homepage')
+                // console.log('jalan yang ga ada')
+                await addAppointment({
+                    variables: {
+                        doctorId: itemValue._id,
+                        queueNumber: Number(1)
+                    },
+                    refetchQueries: [ "GetAppointments" ]
+                })
+                console.log("ini berhasilll=================", res)
+                navigation.navigate('Homepage')
             }
         } catch (err) {
             console.log("ini errorrr", err.message)

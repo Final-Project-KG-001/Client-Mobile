@@ -47,6 +47,7 @@ export default function Home({ navigation }) {
     const [ currentQueue, setCurrentQueue ] = useState(0)
     const [ poli, setPoli ] = useState("")
 
+    const isLogin = useQuery(IS_LOGIN)
     const localUser = useQuery(LOCAL_USER)
     // const { loading, error, data } = useQuery(GET_APPOINTMENTS)
     const { data, subscribeToMore } = useQuery(GET_DATA)
@@ -94,8 +95,8 @@ export default function Home({ navigation }) {
         }
     }, [ subscribeToMore ]);
 
-    console.log(data)
     console.log(localUser.data)
+    console.log(isLogin.data)
 
     function makeAppointment(event) {
         event.preventDefault()

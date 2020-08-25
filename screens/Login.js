@@ -23,67 +23,61 @@ export default function Login({ navigation }) {
     const [ password, setPassword ] = useState('')
 
     const isLogin = useQuery(IS_LOGIN)
+    const localUser = useQuery(LOCAL_USER)
     const users = useQuery(GET_USERS)
     const [loginUser, result] = useMutation(LOGIN_USER)
     const [loginAdmin, res] = useMutation(LOGIN_ADMIN)
+    // console.log(isLogin.data)
+    // console.log(localUser.data)
 
     async function signIn(event) {
         event.preventDefault()
         try {
+            const user = users.data.users.find(x => (x.email === email))
             if (email === 'admin@mail.com') {
-                loginAdmin({
+                await loginAdmin({
                     variables: {
                         email: email,
                         password: password
                     }
                 })
-                console.log(res.data)
-                if(res.data) {
-                    console.log('test')
-                    client.readQuery({
-                        query: IS_LOGIN
-                    })
-                    client.writeQuery({
-                        query: IS_LOGIN,
-                        data: {
-                            isLogin: {
-                                token: res.data.loginAdmin.access_token,
-                                email: email
-                            }
+                const data = await client.readQuery({
+                    query: IS_LOGIN
+                })
+                await client.writeQuery({
+                    query: IS_LOGIN,
+                    data: {
+                        isLogin: {
+                            token: res.data.loginAdmin.access_token,
+                            email: email
                         }
-                    })
-                }
+                    }
+                })
             } else {
-                loginUser({
+                await loginUser({
                     variables: {
                         email: email,
                         password: password
                     }
                 })
-                if(result.data) {
-                    console.log('test', result.data.loginUser.access_token)
-                    const data = client.readQuery({
-                        query: IS_LOGIN
-                    })
-                    console.log(data)
-                    client.writeQuery({
-                        query: IS_LOGIN,
-                        data: {
-                            isLogin: {
-                                token: result.data.loginUser.access_token,
-                                email: email
-                            }
+                const data = await client.readQuery({
+                    query: IS_LOGIN
+                })
+                await client.writeQuery({
+                    query: IS_LOGIN,
+                    data: {
+                        isLogin: {
+                            token: result.data.loginUser.access_token,
+                            email: email
                         }
-                    })
-                }
+                    }
+                })
             }
-            
             if(users.data) {
-                const user = users.data.users.find(x => (x.email === email))
-                client.readQuery({
+                const data = client.readQuery({
                     query: LOCAL_USER
                 })
-                client.writeQuery({
+                await client.writeQuery({
                     query: LOCAL_USER,
                     data: {
                         localUser: {
@@ -96,11 +90,11 @@ export default function Login({ navigation }) {
                         }
                     }
                 })
-                // if(user.role === 'admin') {
-                //     navigation.navigate('Admin')
-                // } else if (user.role === 'user') {
-                //     navigation.navigate('Dashboard')
-                // }
+                if(user.role === 'admin') {
+                    navigation.navigate('Admin')
+                } else if (user.role === 'user') {
+                    navigation.navigate('Dashboard')
+                }
             }
         } catch (err) {
             console.log('internal server')
