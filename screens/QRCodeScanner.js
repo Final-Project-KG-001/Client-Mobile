@@ -52,7 +52,7 @@ export default function QRCodeScanner() {
     console.log(`Bar code with type ${type} and data ${data} has been scanned!`);
     //Handle buat post ke dental/general
     appointments.appointments.map((appointment) => {
-      if(data.UserId === appointment.userId && appointment.status === 'waiting') {
+      if(data === appointment.userId && appointment.status === 'waiting') {
         if(appointment.doctor[0].polyclinic === 'umum') {
           addGeneral({
             variables: {
@@ -64,7 +64,7 @@ export default function QRCodeScanner() {
             variables: {
               appointmentId: appointment._id
             }
-          });
+          }); 
         }
       }
     })
