@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Button, Platform } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { GET_APPOINTMENT } from "../config/apolloClient";
+import { GET_APPOINTMENTS } from "../config/apolloClient";
 
 const ADD_DENTAL = gql`
   mutation AddDental($appointmentId: ID) {
@@ -26,7 +26,7 @@ export default function QRCodeScanner() {
   const [permission, setPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
 
-  const { loading, error, data } = useQuery(GET_APPOINTMENT);
+  const { loading, error, data } = useQuery(GET_APPOINTMENTS);
 
   const [appointments, setAppointment] = useState([]);
 
@@ -42,7 +42,7 @@ export default function QRCodeScanner() {
 
   useEffect(() => {
     if(!loading && data) {
-      setAppointment(data);
+      setAppointment(data.appointments);
     }
   }, [loading, data]);
 
@@ -51,7 +51,7 @@ export default function QRCodeScanner() {
     alert(`Bar code with type ${type} and data ${data} has been scanned!`);
     console.log(`Bar code with type ${type} and data ${data} has been scanned!`);
     //Handle buat post ke dental/general
-    appointments.appointments.map((appointment) => {
+    appointments.map((appointment) => {
       if(data === appointment.userId && appointment.status === 'waiting') {
         if(appointment.doctor[0].polyclinic === 'umum') {
           addGeneral({
