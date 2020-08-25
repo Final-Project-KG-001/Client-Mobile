@@ -1,24 +1,81 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native'
-import { useQuery, gql } from '@apollo/client'
-import { GET_APPOINTMENTS, IS_LOGIN } from "../config/apolloClient"
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { gql, useQuery, useSubscription  } from '@apollo/client'
+import { } from '@apollo/client'
+import { GET_APPOINTMENTS, IS_LOGIN, LOCAL_USER } from "../config/apolloClient"
 
-export default function Home({ route, navigation }) {
+const GET_DATA = gql`
+  query GetData{
+    appointments{
+      _id
+      queueNumber
+      status
+      doctorId
+      doctor{
+        name
+        polyclinic
+      }
+      user{
+        email
+        name
+      }
+    }
+}
+`
+const SUBSCRIBE_NEW_APPOINTMENT = gql`
+  subscription newAppointment {
+    newAppointment {
+      _id
+      userId
+      doctorId
+      queueNumber
+      status
+      doctor{
+        name
+      }
+      user{
+        email
+        name
+      }
+    }
+  }
+`;
+
+export default function Home({ navigation }) {
     const [ userLoginData, setUserLoginData ] = useState("")
     const [ hasQueueNumber, setHasQueueNumber ] = useState(false)
     const [ currentQueue, setCurrentQueue ] = useState(0)
     const [ poli, setPoli ] = useState("")
-    const { loading, error, data } = useQuery(GET_APPOINTMENTS)
 
-    const isLogin = useQuery(IS_LOGIN)
+    const localUser = useQuery(LOCAL_USER)
+    // const { loading, error, data } = useQuery(GET_APPOINTMENTS)
+    const { data, subscribeToMore } = useQuery(GET_DATA)
+    // const { data: subscription } = useSubscription(SUBSCRIBE_NEW_APPOINTMENT)
+    let findOnProcess = null
+
+
 
     useEffect(() => {
+        subscribeToMore({
+            document: SUBSCRIBE_NEW_APPOINTMENT,
+            updateQuery(prev, { subscriptionData }) {
+                if (!subscriptionData.data) {
+                    return prev;
+                }
+
+                const newAppointment = subscriptionData.data.newAppointment;
+
+                return {
+                    ...prev,
+                    dentals: [ ...prev.appointments, newAppointment ],
+                };
+            },
+        })
         if (data) {
             const findQuery = data.appointments.find(appointment => (
-                appointment.user[ 0 ].email === isLogin.data.isLogin.email
+                appointment.user[ 0 ].email === localUser.data.localUser.email
             ))
             if (findQuery) {
-
                 const findOnProcess = data.appointments.find(appointment => (
 
                     appointment.status === "on process" && findQuery.doctor[ 0 ]._id === appointment.doctorId
@@ -35,7 +92,10 @@ export default function Home({ route, navigation }) {
             }
 
         }
-    })
+    }, [ subscribeToMore ]);
+
+    console.log(data)
+    console.log(localUser.data)
 
     function makeAppointment(event) {
         event.preventDefault()
@@ -43,7 +103,6 @@ export default function Home({ route, navigation }) {
     }
 
     return (
-
         <View style={ styles.container }>
             <View style={styles.header}>
                 <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Queue Info</Text>

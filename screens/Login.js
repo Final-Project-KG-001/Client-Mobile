@@ -39,6 +39,7 @@ export default function Login({ navigation }) {
                 })
                 console.log(res.data)
                 if(res.data) {
+                    console.log('test')
                     client.readQuery({
                         query: IS_LOGIN
                     })
@@ -52,7 +53,6 @@ export default function Login({ navigation }) {
                         }
                     })
                 }
-                console.log(email, password)
             } else {
                 loginUser({
                     variables: {
@@ -61,9 +61,11 @@ export default function Login({ navigation }) {
                     }
                 })
                 if(result.data) {
-                    client.readQuery({
+                    console.log('test', result.data.loginUser.access_token)
+                    const data = client.readQuery({
                         query: IS_LOGIN
                     })
+                    console.log(data)
                     client.writeQuery({
                         query: IS_LOGIN,
                         data: {
@@ -94,11 +96,11 @@ export default function Login({ navigation }) {
                         }
                     }
                 })
-                if(user.role === 'admin') {
-                    navigation.navigate('Admin')
-                } else if (user.role === 'user') {
-                    navigation.navigate('Dashboard')
-                }
+                // if(user.role === 'admin') {
+                //     navigation.navigate('Admin')
+                // } else if (user.role === 'user') {
+                //     navigation.navigate('Dashboard')
+                // }
             }
         } catch (err) {
             console.log('internal server')

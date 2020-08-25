@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { useQuery, gql, useMutation } from '@apollo/client'
-import { IS_LOGIN, GET_DOCTORS, GET_APPOINTMENTS } from '../config/apolloClient'
+import { GET_DOCTORS, GET_APPOINTMENTS } from '../config/apolloClient'
 import { Picker } from 'react-native-picker-dropdown'
 
 const ADD_APPOINTMENT = gql`
-    mutation AddAppointment($doctorId:ID, $queueNumber:Int) {
+    mutation AddAppointment($doctorId:ID, $queueNumber:String) {
         addAppointment(doctorId: $doctorId, queueNumber:$queueNumber) {
             message
         }
@@ -19,25 +19,42 @@ export default function MakeAppointment({ navigation }) {
     const [ itemValue, setItemValue ] = useState('Pilih dokter/poli:')
 
     const doctors = useQuery(GET_DOCTORS)
-    const isLogin = useQuery(IS_LOGIN)
-    const [ AddAppointment, res ] = useMutation(ADD_APPOINTMENT)
+    const appointments = useQuery(GET_APPOINTMENTS)
+    // console.log(appointments.data.appointments)
+    const [ addAppointment, res ] = useMutation(ADD_APPOINTMENT)
 
     // console.log(doctors.data)
 
     async function submit() {
         try {
-            await AddAppointment({
-                variables: {
-                    doctorId: itemValue,
-                    queueNumber: Number(3)
-                },
-                refetchQueries: [ "GetAppointments" ]
-            })
-            // console.log("ini berhasilll=================", res)
-            // navigation.navigate('Home', { appointment: true })
-            navigation.navigate('Home', { appointment: true })
+            const sortByPoly = appointments.data.appointments.filter(x => (x.doctor[0].polyclinic === itemValue.polyclinic))
+            console.log(sortByPoly)
+            if (sortByPoly.length > 0) {
+                // console.log('jalan yang ada', sortByPoly.length)
+                console.log(Number(sortByPoly.length + 1), itemValue._id)
+                await addAppointment({
+                    variables: {
+                        doctorId: itemValue._id,
+                        queueNumber: sortByPoly.length + 1
+                    },
+                    refetchQueries: [ "GetAppointments" ]
+                })
+                console.log("ini berhasilll=================", res)
+                navigation.navigate('Homepage')
+            } else {
+                console.log('jalan yang ga ada')
+                // await AddAppointment({
+                //     variables: {
+                //         doctorId: itemValue._id,
+                //         queueNumber: Number(1)
+                //     },
+                //     refetchQueries: [ "GetAppointments" ]
+                // })
+                // console.log("ini berhasilll=================", res)
+                // navigation.navigate('Homepage')
+            }
         } catch (err) {
-            console.log("ini errorrr", err)
+            console.log("ini errorrr", err.message)
         }
     }
 
@@ -57,7 +74,7 @@ export default function MakeAppointment({ navigation }) {
                     >
                         {
                             doctors.data.doctors.map(doctor => (
-                                <Picker.Item key={ doctor._id } label={ `${ doctor.name } - ${ doctor.polyclinic }` } value={ doctor._id } />
+                                <Picker.Item key={ doctor._id } label={ `${ doctor.name } - ${ doctor.polyclinic }` } value={ doctor } />
                             ))
                         }
                     </Picker>

@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { View, Text, ImageBackground, TouchableOpacity, StyleSheet } from 'react-native'
+import { gql, useQuery, useSubscription } from '@apollo/client'
 
 export default function LandingPage({ navigation }) {
+
   function toLoginPage(event) {
     event.preventDefault();
     navigation.navigate("Login");

@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
 import { useQuery, gql } from '@apollo/client'
-import client, { IS_LOGIN, GET_USERS, LOCAL_USER } from '../config/apolloClient'
+import client, { IS_LOGIN, LOCAL_USER } from '../config/apolloClient'
 
 import DetailProfile from '../components/DetailProfile'
 import FormEditProfile from '../components/FormEditProfile'
@@ -28,6 +28,13 @@ export default function Profile({ navigation }) {
             }
         })
         navigation.navigate('LandingPage')
+    }
+
+    function updateuser() {
+        console.log('agadads')
+        setShowDetail(true);
+        setShowQR(false);
+        setShowForm(false);
     }
 
     function edit() {
@@ -70,7 +77,7 @@ export default function Profile({ navigation }) {
                             </TouchableOpacity>
                         </View>
                         { showDetail && <DetailProfile user={localUser.data.localUser} logout={logout}/> }
-                        { showForm && <FormEditProfile user={localUser.data.localUser}/> }
+                        { showForm && <FormEditProfile user={localUser.data.localUser} updateuser={updateuser}/> }
                         { showQR && <QRComponent user={localUser.data.localUser}/> }
                     </View>
                 </View>
