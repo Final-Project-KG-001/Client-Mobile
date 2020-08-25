@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native'
 import { gql, useMutation } from '@apollo/client'
+import client, { IS_LOGIN, LOCAL_USER, GET_USERS } from '../config/apolloClient'
 
 const EDIT_USER = gql`
     mutation EditUser($_id: ID, $name: String, $dob: String, $phoneNumber: String) {
@@ -10,11 +11,10 @@ const EDIT_USER = gql`
     }
 `
 
-export default function FormEditProfile({user}) {
+export default function FormEditProfile({user, updateuser}) {
     const [name, setName] = useState(user.name)
     const [dob, setDob] = useState(user.dob)
     const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber)
-    console.log(dob)
 
     const [updateUser, result] = useMutation(EDIT_USER)
 
@@ -22,7 +22,7 @@ export default function FormEditProfile({user}) {
         event.preventDefault()
         try {
             console.log(user, name, dob, phoneNumber)
-            const {data} = await updateUser({
+            await updateUser({
                 variables: {
                     _id: user._id,
                     name: name,
@@ -30,9 +30,27 @@ export default function FormEditProfile({user}) {
                     phoneNumber: phoneNumber
                 }
             })
-            console.log(data)
+            client.readQuery({
+                query: LOCAL_USER
+            })
+            client.writeQuery({
+                query: LOCAL_USER,
+                data: {
+                    localUser: {
+                        _id: user._id,
+                        name: name,
+                        email: user.email,
+                        dob: dob,
+                        phoneNumber: phoneNumber,
+                        role: user.role
+                    }
+                },
+                refetchQueries: [ "LocalUser" ]
+            })
+            console.log(result.data)
+            updateuser()
         } catch (err) {
-            console.log(err.response)
+            console.log(err)
         }
     }
 

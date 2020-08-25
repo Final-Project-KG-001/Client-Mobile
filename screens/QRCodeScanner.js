@@ -30,8 +30,13 @@ export default function QRCodeScanner() {
 
   const [appointments, setAppointment] = useState([]);
 
+<<<<<<< HEAD
   const [addDental] = useMutation(ADD_DENTAL);
   const [addGeneral] = useMutation(ADD_GENERAL);
+=======
+  const [addDental, resultDental] = useMutation(ADD_DENTAL);
+  const [addGeneral, resultGeneral] = useMutation(ADD_GENERAL);
+>>>>>>> 7b629a87f2c727c2ad0219adaf24711ff718d056
 
   useEffect(() => {
     (async () => {
@@ -52,6 +57,10 @@ export default function QRCodeScanner() {
     console.log(`Bar code with type ${type} and data ${data} has been scanned!`);
     //Handle buat post ke dental/general
     appointments.map((appointment) => {
+<<<<<<< HEAD
+=======
+      console.log(appointment)
+>>>>>>> 7b629a87f2c727c2ad0219adaf24711ff718d056
       if(data === appointment.userId && appointment.status === 'waiting') {
         if(appointment.doctor[0].polyclinic === 'umum') {
           addGeneral({

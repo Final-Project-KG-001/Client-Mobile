@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, TextInput, Image } from 'react-native'
 import { useQuery, gql, useMutation } from '@apollo/client'
-import client, { IS_LOGIN, LOCAL_USER, GET_USERS } from '../config/apolloClient'
+import client, { IS_LOGIN } from '../config/apolloClient'
+
 const LOGIN_USER = gql`
     mutation LoginUser($email:String, $password:String) {
         loginUser(email: $email, password:$password) {
@@ -22,15 +23,15 @@ export default function Login({ navigation }) {
     const [ password, setPassword ] = useState('')
 
     const isLogin = useQuery(IS_LOGIN)
-    const users = useQuery(GET_USERS)
-    const [ loginUser, result ] = useMutation(LOGIN_USER)
-    const [ loginAdmin, res ] = useMutation(LOGIN_ADMIN)
+    const [ loginUser, resultLoginUser ] = useMutation(LOGIN_USER)
+    const [ loginAdmin, resultLoginAdmin ] = useMutation(LOGIN_ADMIN)
 
     async function signIn(event) {
         event.preventDefault()
         try {
+            // const user = users.data.users.find(x => (x.email === email))
             if (email === 'admin@mail.com') {
-                loginAdmin({
+                await loginAdmin({
                     variables: {
                         email: email,
                         password: password
@@ -53,7 +54,7 @@ export default function Login({ navigation }) {
                 }
                 // console.log(email, password)
             } else {
-                loginUser({
+                await loginUser({
                     variables: {
                         email: email,
                         password: password
@@ -78,29 +79,36 @@ export default function Login({ navigation }) {
             if (users.data) {
                 const user = users.data.users.find(x => (x.email === email))
                 client.readQuery({
-                    query: LOCAL_USER
+                    query: IS_LOGIN
                 })
                 client.writeQuery({
-                    query: LOCAL_USER,
+                    query: IS_LOGIN,
                     data: {
-                        localUser: {
-                            _id: user._id,
-                            name: user.name,
-                            email: email,
-                            dob: user.dob,
-                            phoneNumber: user.phoneNumber,
-                            role: user.role
+                        isLogin: {
+                            token: resultLoginAdmin.data.loginAdmin.access_token,
+                            email: email
                         }
                     }
                 })
-                if (user.role === 'admin') {
-                    navigation.navigate('Admin')
-                } else if (user.role === 'user') {
-                    navigation.navigate('Dashboard')
-                }
+                navigation.navigate('Admin')
+            } else if (resultLoginUser.data) {
+                client.readQuery({
+                    query: IS_LOGIN
+                })
+                client.writeQuery({
+                    query: IS_LOGIN,
+                    data: {
+                        isLogin: {
+                            token: resultLoginUser.data.loginUser.access_token,
+                            email: email
+                        }
+                    }
+                })
+                navigation.navigate('Dashboard')
             }
         } catch (err) {
-            // console.log('internal server')
+            console.log(err)
+            console.log('internal server')
         }
     }
     function register(event) {

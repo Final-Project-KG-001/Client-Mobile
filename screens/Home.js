@@ -1,26 +1,79 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native'
-import { useQuery, gql } from '@apollo/client'
-import { GET_APPOINTMENTS, IS_LOGIN } from "../config/apolloClient"
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { gql, useQuery, useSubscription  } from '@apollo/client'
+import { IS_LOGIN } from "../config/apolloClient"
 
-export default function Home({ route, navigation }) {
+const GET_APPOINTMENTS = gql`
+  query GetAppointments ($access_token:String) {
+    appointments (access_token: $access_token) {
+      _id
+      queueNumber
+      status
+      doctorId
+      doctor{
+        name
+        polyclinic
+      }
+      user{
+        email
+        name
+      }
+    }
+}
+`
+
+const SUBSCRIBE_NEW_APPOINTMENT = gql`
+  subscription newAppointment {
+    newAppointment {
+      _id
+      userId
+      doctorId
+      queueNumber
+      status
+      doctor{
+        name
+      }
+      user{
+        email
+        name
+      }
+    }
+  }
+`;
+
+export default function Home({ navigation }) {
     const [ userLoginData, setUserLoginData ] = useState("")
     const [ hasQueueNumber, setHasQueueNumber ] = useState(false)
     const [ currentQueue, setCurrentQueue ] = useState(0)
     const [ poli, setPoli ] = useState("")
-    const { loading, error, data } = useQuery(GET_APPOINTMENTS)
 
     const isLogin = useQuery(IS_LOGIN)
+    const { data, subscribeToMore } = useQuery(GET_APPOINTMENTS, {
+        variables: { access_token: isLogin.data.isLogin.token },
+    })
+    const { data: subscription } = useSubscription(SUBSCRIBE_NEW_APPOINTMENT)
 
     useEffect(() => {
+        subscribeToMore({
+            document: SUBSCRIBE_NEW_APPOINTMENT,
+            updateQuery(prev, { subscriptionData }) {
+                if (!subscriptionData.data) {
+                    return prev;
+                }
+                const newAppointment = subscriptionData.data.newAppointment;
+
+                return {
+                    ...prev,
+                    dentals: [ ...prev.appointments, newAppointment ],
+                };
+            },
+        })
         if (data) {
             const findQuery = data.appointments.find(appointment => (
                 appointment.user[ 0 ].email === isLogin.data.isLogin.email
             ))
             if (findQuery) {
-
                 const findOnProcess = data.appointments.find(appointment => (
-
                     appointment.status === "on process" && findQuery.doctor[ 0 ]._id === appointment.doctorId
                 ))
                 if (findOnProcess) {
@@ -33,17 +86,19 @@ export default function Home({ route, navigation }) {
             } else {
                 setHasQueueNumber(false)
             }
-
         }
-    })
+    }, [ subscribeToMore ])
 
     function makeAppointment(event) {
         event.preventDefault()
         navigation.navigate('MakeAppointment')
     }
+    // console.log(isLogin.data)
+
+    // console.log(userLoginData, "user appointment data")
+    // console.log(currentQueue, "qurrent appointment data")
 
     return (
-
         <View style={ styles.container }>
             <View style={styles.header}>
                 <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Queue Info</Text>
@@ -90,7 +145,6 @@ export default function Home({ route, navigation }) {
 
                     </View>
             }
-
         </View>
     )
 }

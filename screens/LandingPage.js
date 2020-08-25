@@ -1,7 +1,8 @@
 import React from 'react'
-import { View, Text, ImageBackground, TouchableOpacity, StyleSheet, Image } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native'
 
 export default function LandingPage({ navigation }) {
+
   function toLoginPage(event) {
     event.preventDefault();
     navigation.navigate("Login");

@@ -1,14 +1,18 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
 import { useQuery, gql } from '@apollo/client'
-import client, { IS_LOGIN, GET_USERS, LOCAL_USER } from '../config/apolloClient'
+import client, { IS_LOGIN, LOCAL_USER, GET_USERS } from '../config/apolloClient'
 
 import DetailProfile from '../components/DetailProfile'
 import FormEditProfile from '../components/FormEditProfile'
 import QRComponent from '../components/QRComponent'
 
 export default function Profile({ navigation }) {
-    const localUser = useQuery(LOCAL_USER)
+    const [ userLoginData, setUserLoginData ] = useState("")
+    const isLogin = useQuery(IS_LOGIN)
+    const users = useQuery(GET_USERS, {
+        variables: { access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNDQ1ZGMzMTIxZjkwZjAxYWNjNDdlZSIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTgzNjk3ODZ9.rrF50fYJwJyXE9GeZSIAaDyvqprw0GG3YymtM4mv3XE" },
+    })
     const [showForm, setShowForm] = useState(false);
     const [showDetail, setShowDetail] = useState(true);
     const [showQR, setShowQR] = useState(false);
@@ -30,6 +34,12 @@ export default function Profile({ navigation }) {
         navigation.navigate('LandingPage')
     }
 
+    function updateuser() {
+        setShowDetail(true);
+        setShowQR(false);
+        setShowForm(false);
+    }
+
     function edit() {
         setShowForm(true);
         setShowDetail(false);
@@ -45,14 +55,36 @@ export default function Profile({ navigation }) {
         setShowQR(false);
         setShowForm(false);
     }
-    console.log(localUser.data.localUser)
+    useEffect(() => {
+        if(users.data) {
+            const findUser = users.data.users.find(user => (
+                user.email === isLogin.data.isLogin.email
+            ))
+            if (findUser) {
+                console.log(findUser)
+                setUserLoginData(findUser)
+            }
+        }
+    }, [])
+
+    console.log(userLoginData)
 
     return (
         <View style={ styles.container }>
-            { localUser.data && 
+            { isLogin.loading && users.loading && 
+                <View>
+                    <Text>loading</Text>
+                </View>
+            }
+            { isLogin.error && users.error && 
+                <View>
+                    <Text>error</Text>
+                </View>
+            }
+            { userLoginData && 
                 <View>
                     <View style={styles.header}>
-                        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{localUser.data.localUser.name}</Text>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{userLoginData.name}</Text>
                     </View>
                     <View style={{ marginTop: 40, marginHorizontal: 10 }}>
                         <Image source={require('../assets/dummy.png')} style={{
@@ -69,9 +101,9 @@ export default function Profile({ navigation }) {
                                 <Text style={{ fontSize:20, fontWeight: 'bold', color: 'white' }}>QR</Text>
                             </TouchableOpacity>
                         </View>
-                        { showDetail && <DetailProfile user={localUser.data.localUser} logout={logout}/> }
-                        { showForm && <FormEditProfile user={localUser.data.localUser}/> }
-                        { showQR && <QRComponent user={localUser.data.localUser}/> }
+                        { showDetail && <DetailProfile user={userLoginData} logout={logout}/> }
+                        { showForm && <FormEditProfile user={userLoginData} updateuser={updateuser}/> }
+                        { showQR && <QRComponent user={userLoginData}/> }
                     </View>
                 </View>
             }
