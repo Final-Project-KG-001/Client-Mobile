@@ -1,10 +1,37 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
+import { View, Text, StyleSheet, Button, Platform } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { GET_APPOINTMENTS } from "../config/apolloClient";
+
+const ADD_DENTAL = gql`
+  mutation AddDental($appointmentId: ID) {
+    addDental(appointmentId: $appointmentId) {
+      status
+      message
+    }
+  }
+`;
+
+const ADD_GENERAL = gql`
+  mutation AddGeneral($appointmentId: ID) {
+    addGeneral(appointmentId: $appointmentId) {
+      status
+      message
+    }
+  }
+`;
 
 export default function QRCodeScanner() {
   const [permission, setPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
+
+  const { loading, error, data } = useQuery(GET_APPOINTMENTS);
+
+  const [appointments, setAppointment] = useState([]);
+
+  const [addDental] = useMutation(ADD_DENTAL);
+  const [addGeneral] = useMutation(ADD_GENERAL);
 
   useEffect(() => {
     (async () => {
@@ -13,11 +40,34 @@ export default function QRCodeScanner() {
     })();
   }, []);
 
+  useEffect(() => {
+    if(!loading && data) {
+      setAppointment(data.appointments);
+    }
+  }, [loading, data]);
+
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
     alert(`Bar code with type ${type} and data ${data} has been scanned!`);
     console.log(`Bar code with type ${type} and data ${data} has been scanned!`);
     //Handle buat post ke dental/general
+    appointments.map((appointment) => {
+      if(data === appointment.userId && appointment.status === 'waiting') {
+        if(appointment.doctor[0].polyclinic === 'umum') {
+          addGeneral({
+            variables: {
+              appointmentId: appointment._id
+            }
+          });
+        } else if(appointment.doctor[0].polyclinic === 'gigi') {
+          addDental({
+            variables: {
+              appointmentId: appointment._id
+            }
+          }); 
+        }
+      }
+    })
   };
 
   if (permission === false) {

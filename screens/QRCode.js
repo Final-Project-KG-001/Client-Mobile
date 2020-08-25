@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,11 +6,22 @@ import {
   TouchableOpacity,
   StyleSheet,
   TextInput,
+  Platform,
 } from "react-native";
 import QRCode from "react-native-qrcode-svg";
+import { useQuery } from "@apollo/client";
+import { IS_LOGIN } from "../config/apolloClient";
 
 export default function QRCodeScreen() {
   const [showCode, setShowCode] = useState(false);
+  const [userId, setUserId] = useState('');
+  const { error, loading, data } = useQuery(IS_LOGIN);
+
+  useEffect(() => {
+    if(!loading && data) {
+      setUserId(data.isLogin._id);
+    }
+  })
 
   function showQR() {
     setShowCode(true);
@@ -46,7 +57,7 @@ export default function QRCodeScreen() {
               Hide
             </Text>
           </TouchableOpacity>
-          {showCode && <QRCode value="{UserId: 10}" size={250}/>}
+          {showCode && <QRCode value={userId} size={250}/>}
         </ImageBackground>
       </View>
     </View>
