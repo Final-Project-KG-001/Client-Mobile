@@ -3,17 +3,15 @@ import { View, Text, StyleSheet } from 'react-native'
 import { useQuery, gql } from '@apollo/client'
 import { GET_DOCTORS } from '../config/apolloClient'
 import DoctorCard from '../components/DoctorCard'
-import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function ListDoctor() {
     const { loading, error, data } = useQuery(GET_DOCTORS)
 
     return (
-        <SafeAreaView>
-
-            <View style={ styles.container }>
-                <View style={ styles.header }>
-                    <Text style={ { fontSize: 20, fontWeight: 'bold' } }>List Doctors:</Text>
+        <View style={ styles.container }>
+            <View>
+                <View style={styles.header}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Doctor List</Text>
                 </View>
                 { loading && <Text>loading</Text> }
                 { error && <Text>error</Text> }
@@ -25,19 +23,20 @@ export default function ListDoctor() {
                     }
                 </View> }
             </View>
-        </SafeAreaView>
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // backgroundColor: '#eae7dc'
+        display: "flex"
     },
     header: {
-        // backgroundColor: '#ea8685',
+        backgroundColor: '#eae7dc',
         height: 70,
         alignItems: 'center',
-        paddingTop: 40
+        paddingTop: 40,
+        borderRadius: 15,
     }
 })

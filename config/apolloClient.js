@@ -1,8 +1,8 @@
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
-const MYIP = '192.168.100.157:4000'
+// const MYIP = '192.168.100.157:4000'
 
 const client = new ApolloClient({
-  uri: `http://${MYIP}`,
+  uri: 'http://54.254.218.69:4000/',
   cache: new InMemoryCache()
 })
 
