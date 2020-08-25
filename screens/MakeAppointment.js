@@ -5,8 +5,8 @@ import { GET_DOCTORS, GET_APPOINTMENTS } from '../config/apolloClient'
 import { Picker } from 'react-native-picker-dropdown'
 
 const ADD_APPOINTMENT = gql`
-    mutation AddAppointment($doctorId:ID, $queueNumber:Int) {
-        addAppointment(doctorId: $doctorId, queueNumber:$queueNumber) {
+    mutation AddAppointment($doctorId:ID, $queueNumber:Int, $access_token:String) {
+        addAppointment(doctorId: $doctorId, queueNumber:$queueNumber, access_token:$access_token) {
             message
         }
     }

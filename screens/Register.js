@@ -31,7 +31,6 @@ export default function Register({ navigation }) {
                     phoneNumber: phoneNumber
                 }
             })
-            console.log(result)
             navigation.navigate('Login')
         } catch (err) {
             console.log(err)
