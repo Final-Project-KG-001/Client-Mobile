@@ -1,65 +1,111 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  ImageBackground,
-  TouchableOpacity,
-  StyleSheet,
-  TextInput,
-  Platform,
-} from "react-native";
-import QRCode from "react-native-qrcode-svg";
-import { useQuery } from "@apollo/client";
-import { IS_LOGIN } from "../config/apolloClient";
+import { View, Text, StyleSheet, Button, Platform } from "react-native";
+import { BarCodeScanner } from "expo-barcode-scanner";
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { GET_APPOINTMENTS, IS_LOGIN } from "../config/apolloClient";
 
-export default function QRCodeScreen() {
-  const [showCode, setShowCode] = useState(false);
-  const [userId, setUserId] = useState('');
-  const { error, loading, data } = useQuery(IS_LOGIN);
+const ADD_DENTAL = gql`
+  mutation AddDental($appointmentId: ID, $access_token:String) {
+    addDental(appointmentId: $appointmentId, access_token: $access_token) {
+      status
+      message
+    }
+  }
+`;
+
+const ADD_GENERAL = gql`
+  mutation AddGeneral($appointmentId: ID, $access_token:String) {
+    addGeneral(appointmentId: $appointmentId, access_token: $access_token) {
+      status
+      message
+    }
+  }
+`;
+
+export default function QRCodeScanner() {
+  const [permission, setPermission] = useState(null);
+  const [scanned, setScanned] = useState(false);
+
+  const isLogin = useQuery(IS_LOGIN)
+
+  console.log(isLogin.data)
+
+  const { loading, error, data } = useQuery(GET_APPOINTMENTS, {
+    variables: { access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNDQ1ZGMzMTIxZjkwZjAxYWNjNDdlZSIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTg0MTUyNjd9.yD7NyAe8bBjxrC4Ae-02hO0QQS0wxxZO5vhvHsrADRI" },
+  });
+
+
+  const [appointments, setAppointment] = useState([]);
+
+  const [addDental] = useMutation(ADD_DENTAL);
+  const [addGeneral] = useMutation(ADD_GENERAL);
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await BarCodeScanner.requestPermissionsAsync();
+      setPermission(status === "granted");
+    })();
+  }, []);
 
   useEffect(() => {
     if(!loading && data) {
-      setUserId(data.isLogin._id);
+      setAppointment(data.appointments);
     }
-  })
+  }, [loading, data]);
 
-  function showQR() {
-    setShowCode(true);
-  }
+  const handleBarCodeScanned = ({ type, data }) => {
+    setScanned(true);
+    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    console.log(`Bar code with type ${type} and data ${data} has been scanned!`);
+    //Handle buat post ke dental/general
+    appointments.map((appointment) => {
+      console.log(data)
+      console.log(appointment)
+      if(data === appointment.userId && appointment.status === 'waiting') {
+        if(appointment.doctor[0].polyclinic === 'umum') {
+          console.log(appointment._id)
+          addGeneral({
+            variables: {
+              access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNDQ1ZGMzMTIxZjkwZjAxYWNjNDdlZSIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTg0MTUzMjF9.2tA3Q8bwTd0spR_-u6X3ra6IZ94qy4S1WLSvon_MduM",
+              appointmentId: appointment._id
+            }
+          });
+          console.log('jalan')
+        } else if(appointment.doctor[0].polyclinic === 'gigi') {
+          console.log(appointment._id)
+          addDental({
+            variables: {
+              access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNDQ1ZGMzMTIxZjkwZjAxYWNjNDdlZSIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTg0MTUzMjF9.2tA3Q8bwTd0spR_-u6X3ra6IZ94qy4S1WLSvon_MduM",
+              appointmentId: appointment._id
+            }
+          }); 
+          console.log('jalan')
+        }
+      }
+    })
+  };
 
-  function hideQR() {
-    setShowCode(false);
+  if (permission === false) {
+    return <Text>No access to camera!</Text>;
   }
 
   return (
     <View
-      style={{ flex: 1, backgroundColor: "white", justifyContent: "flex-end" }}
+      style={{ flex: 1, backgroundColor: "white", justifyContent: "center" }}
     >
-      <View style={{ ...StyleSheet.absoluteFill }}>
-        <ImageBackground
-          source={require("../assets/Rainbow-Pattern.jpg")}
-          style={styles.droidSafeArea}
-        >
-          <Text style={{ fontWeight: "bold", fontSize: 30 }}>QR Code Page</Text>
-          <TouchableOpacity
-            onPress={showQR}
-            style={{ ...styles.button, backgroundColor: "blue" }}
-          >
-            <Text style={{ fontSize: 15, fontWeight: "bold", color: "white" }}>
-              Show
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={hideQR}
-            style={{ ...styles.button, backgroundColor: "blue" }}
-          >
-            <Text style={{ fontSize: 15, fontWeight: "bold", color: "white" }}>
-              Hide
-            </Text>
-          </TouchableOpacity>
-          {showCode && <QRCode value={userId} size={250}/>}
-        </ImageBackground>
+      <Text style={{ fontWeight: "bold", fontSize: 30, textAlign: "center" }}>
+        QR Code Scanner
+      </Text>
+      <View style={{ flex: 0.9, margin: 0 }}>
+        <BarCodeScanner
+          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+          style={StyleSheet.absoluteFillObject}
+        />
       </View>
+      {scanned && (
+        <Button title={"Tap to Scan Again"} onPress={() => setScanned(false)} style={{ marginHorizontal: 20}}/>
+      )}
+      {!scanned && <Text style={{textAlign: "center", fontSize: 20}}>Scanning...</Text>}
     </View>
   );
 }
@@ -72,24 +118,5 @@ const styles = StyleSheet.create({
     width: null,
     justifyContent: "center",
     alignItems: "center",
-  },
-  button: {
-    backgroundColor: "white",
-    height: 50,
-    marginHorizontal: 20,
-    borderRadius: 35,
-    alignItems: "center",
-    justifyContent: "center",
-    marginVertical: 5,
-  },
-  textInput: {
-    backgroundColor: "white",
-    height: 50,
-    borderRadius: 25,
-    borderWidth: 1,
-    marginHorizontal: 20,
-    paddingLeft: 10,
-    marginVertical: 5,
-    borderColor: "black",
-  },
+  }
 });
