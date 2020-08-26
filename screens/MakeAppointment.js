@@ -114,18 +114,18 @@ export default function MakeAppointment({ navigation }) {
             </View>
             { loading &&
                 <View>
-                    <Text style={ { fontSize: 20, fontWeight: 'bold', alignSelf: 'center', marginTop: 30, color: "#838383" } }>Loading..</Text>
+                    <Text>loading</Text>
                 </View>
             }
             { error &&
                 <View>
-                    <Text style={ { fontSize: 20, fontWeight: 'bold', alignSelf: 'center', marginTop: 30, color: "#838383" } }>Oooops... Please Reload Your App</Text>
+                    <Text>error</Text>
                 </View>
             }
             { data &&
                 <View style={ { paddingHorizontal: 20, paddingTop: 30 } }>
-                    <Text style={ { fontSize: 18, color: "#838383", fontWeight: 'bold', marginBottom: 20, alignSelf: 'center' } }>Kamu belum memiliki appointment.</Text>
-                    <Text style={ { color: "#838383", fontWeight: 'bold', marginBottom: 20, alignSelf: 'center' } }>Silahkan membuat appointment baru untuk masuk dalam daftar antrian hari ini.</Text>
+                    <Text style={ { fontSize: 18, color: "#838383", fontWeight: 'bold', marginBottom: 20, alignSelf: 'center' } }>You don't have any appointment today</Text>
+                    <Text style={ { color: "#838383", fontWeight: 'bold', marginBottom: 20, alignSelf: 'center', textAlign: "center" } }>Please make a new appointment to consult with our doctors</Text>
                     <Picker
                         placeholder="Klik untuk pilih dokter ..."
                         selectedValue={ itemValue }
@@ -135,12 +135,12 @@ export default function MakeAppointment({ navigation }) {
                     >
                         {
                             data.doctors.map(doctor => (
-                                <Picker.Item key={ doctor._id } label={ `${ doctor.name } - poli ${ doctor.polyclinic }` } value={ doctor._id } />
+                                <Picker.Item key={ doctor._id } label={ `${ doctor.name } - poli ${ doctor.polyclinic }` } value={ doctor } />
                             ))
                         }
                     </Picker>
                     <TouchableOpacity onPress={ submit } style={ { ...styles.button, backgroundColor: '#ea8685' } }>
-                        <Text style={ { ...styles.buttonText, color: 'white' } }>Tambahkan</Text>
+                        <Text style={ { ...styles.buttonText, color: 'white' } }>Add</Text>
                     </TouchableOpacity>
                     <View style={ { alignItems: 'center', padding: 0, marginTop: 40 } }>
                         <Image source={ require('../assets/appointment.png') } style={ styles.picture } />
