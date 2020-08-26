@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, Image, TouchableOpacity, SafeAreaView } from 'react-native'
 import { useQuery } from '@apollo/client'
 import client, { IS_LOGIN, LOCAL_USER } from '../config/apolloClient'
 
@@ -53,6 +53,7 @@ export default function Profile({ navigation }) {
     }
 
     return (
+        <SafeAreaView>
         <View style={ styles.container }>
             { loading && 
                 <View>
@@ -67,13 +68,13 @@ export default function Profile({ navigation }) {
             { data && 
                 <View>
                     <View style={styles.header}>
-                        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{data.localUser.name}</Text>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color:"black", marginTop:21 }}>{data.localUser.name}</Text>
                     </View>
                     <View style={{ marginTop: 40, marginHorizontal: 10 }}>
                         <Image source={require('../assets/dummy.png')} style={{
                             height: 80, width: 80, borderRadius: 40, borderColor: 'white', borderWidth: 3
                         }}/>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop:40, marginBottom:30 }}>
                             <TouchableOpacity onPress={detail} style={{ ...styles.buttonTop }}>
                                 <Text style={{ fontSize:20, fontWeight: 'bold', color: '#e66767' }}>Detail</Text>
                             </TouchableOpacity>
@@ -91,6 +92,7 @@ export default function Profile({ navigation }) {
                 </View>
             }
         </View>
+        </SafeAreaView>
     )
 }
 
@@ -103,7 +105,7 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         right: 0,
-        backgroundColor: '#eae7dc',
+        // backgroundColor: 'white',
         height: 80,
         paddingTop: 40,
         paddingLeft: 100

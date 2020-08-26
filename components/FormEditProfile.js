@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native'
 import { gql, useMutation, useQuery } from '@apollo/client'
 import client, { IS_LOGIN, LOCAL_USER } from '../config/apolloClient'
@@ -12,15 +12,15 @@ const EDIT_USER = gql`
     }
 `
 
-export default function FormEditProfile({user, updateuser}) {
-    const [name, setName] = useState(user.name)
-    const [dob, setDob] = useState(user.dob)
-    const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber)
+export default function FormEditProfile({ user, updateuser }) {
+    const [ name, setName ] = useState(user.name)
+    const [ dob, setDob ] = useState(user.dob)
+    const [ phoneNumber, setPhoneNumber ] = useState(user.phoneNumber)
     const [ error, setError ] = useState({ message: '' })
 
     const isLogin = useQuery(IS_LOGIN)
-    const [updateUser, result] = useMutation(EDIT_USER)
-    
+    const [ updateUser, result ] = useMutation(EDIT_USER)
+
     async function editUser(event) {
         event.preventDefault()
         try {
@@ -34,7 +34,7 @@ export default function FormEditProfile({user, updateuser}) {
                     phone = '62' + phoneNumber
                 }
             } else {
-                setError({ message: 'phone number minimal 10 karakter' })
+                setError({ message: 'phone number minimal 10 characters' })
             }
             if (!error.message) {
                 console.log('jalan engga error')
@@ -72,12 +72,12 @@ export default function FormEditProfile({user, updateuser}) {
     }
 
     return (
-        <View style={styles.contentCard}>
-            <Text style={{ alignSelf: 'center', fontWeight: 'bold', fontSize: 25 }}>Edit Profile</Text>
-            <TextInput onChangeText={(text) => setName(text)} placeholder="Your Name" style={styles.textInput} placeholderTextColor="black"/>
-            <Text style={ { marginLeft: 45, marginBottom: 10 } }>Date Of Birth</Text>
+        <View style={ styles.contentCard }>
+            <Text style={ { alignSelf: 'center', fontWeight: 'bold', fontSize: 25 } }>Edit Profile</Text>
+            <TextInput onChangeText={ (text) => setName(text) } placeholder="Your Name" style={ styles.textInput } placeholderTextColor="black" />
+            <Text style={ { marginLeft: 45, marginBottom: 10, marginTop: 20 } }>Date Of Birth</Text>
             <DatePicker
-                style={ { alignSelf: 'center', width: 320 } }
+                style={ { alignSelf: 'center', width: 320, marginBottom: 10, width: 290, borderBottomWidth: 1 } }
                 date={ dob }
                 mode="date"
                 placeholder="Date of Birth"
@@ -93,16 +93,19 @@ export default function FormEditProfile({user, updateuser}) {
                         marginLeft: 0
                     },
                     dateInput: {
-                        marginLeft: 36
+                        marginLeft: 36,
+                        borderColor: "#eae7dc",
+                        marginLeft: 10,
+                        alignItems: "flex-start"
                     }
                     // ... You can check the source to find the other keys.
                 } }
                 onDateChange={ (date) => { setDob(date) } }
             />
-            {/* <TextInput onChangeText={(text) => setDob(text)} placeholder="Date of Birth" style={styles.textInput} placeholderTextColor="black"/> */}
-            <TextInput onChangeText={(text) => setPhoneNumber(text)} placeholder="Phone Number" style={styles.textInput} placeholderTextColor="black"/>
-            <TouchableOpacity onPress={editUser} style={{ ...styles.button, backgroundColor: '#c8d5b9' }}>
-                <Text style={{ ...styles.buttonText, color: 'black' }}>Submit</Text>
+            {/* <TextInput onChangeText={(text) => setDob(text)} placeholder="Date of Birth" style={styles.textInput} placeholderTextColor="black"/> */ }
+            <TextInput onChangeText={ (text) => setPhoneNumber(text) } placeholder="Phone Number" style={ styles.textInput } placeholderTextColor="black" />
+            <TouchableOpacity onPress={ editUser } style={ { ...styles.button, backgroundColor: '#c8d5b9' } }>
+                <Text style={ { ...styles.buttonText, color: 'black' } }>Submit</Text>
             </TouchableOpacity>
             { error && <Text style={ { alignSelf: "center", color: "#3b6978" } }>{ error.message }</Text> }
         </View>
@@ -121,7 +124,7 @@ const styles = StyleSheet.create({
         marginBottom: 30
     },
     buttonText: {
-        fontSize:20,
+        fontSize: 20,
         fontWeight: 'bold',
     },
     textInput: {
