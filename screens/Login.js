@@ -19,7 +19,7 @@ const LOGIN_ADMIN = gql`
 `
 
 export default function Login({ navigation }) {
-    const [error, setError] = useState({ message: 'field tidak boleh kosong' })
+    const [error, setError] = useState({ message: '' })
     const [ email, setEmail ] = useState('')
     const [ password, setPassword ] = useState('')
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native'
 import { useQuery, useMutation, gql } from '@apollo/client'
 import { IS_LOGIN } from '../config/apolloClient'
 import { Picker } from 'react-native-picker-dropdown'
@@ -43,17 +43,17 @@ export default function MakeAppointment({ navigation }) {
         language: 'javascript',
     };
     const [ itemValue, setItemValue ] = useState('Pilih dokter/poli:')
-    const { loading, error, data } = useQuery(GET_DATA, {
-        variables: { access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNDQ1ZGMzMTIxZjkwZjAxYWNjNDdlZSIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTgzNjk3ODZ9.rrF50fYJwJyXE9GeZSIAaDyvqprw0GG3YymtM4mv3XE" },
-    })
     const isLogin = useQuery(IS_LOGIN)
+    const { loading, error, data } = useQuery(GET_DATA, {
+        variables: { access_token: isLogin.data.isLogin.token },
+    })
     const [ addAppointment, res ] = useMutation(ADD_APPOINTMENT)
 
     async function submit() {
         try {
-            const sortByPoly = data.appointments.filter(x => (x.doctor[0].polyclinic === itemValue.polyclinic))
-            console.log('ini data login - ',isLogin.data.isLogin.token)
-            console.log('ini sort by - ',sortByPoly.length + 1)
+            const sortByPoly = data.appointments.filter(x => (x.doctor[ 0 ].polyclinic === itemValue.polyclinic))
+            console.log('ini data login - ', isLogin.data.isLogin.token)
+            console.log('ini sort by - ', sortByPoly.length + 1)
             console.log('ini doctor id - ', itemValue._id)
             if (sortByPoly.length > 0) {
                 await addAppointment({
@@ -69,8 +69,10 @@ export default function MakeAppointment({ navigation }) {
                 await addAppointment({
                     variables: {
                         doctorId: itemValue._id,
-                        queueNumber: Number(1)
-                    }
+                        queueNumber: Number(1),
+                        access_token: isLogin.data.isLogin.token
+                    },
+                    refetchQueries: [ "GetAppointments" ]
                 })
                 navigation.navigate('Homepage')
             }
@@ -80,42 +82,43 @@ export default function MakeAppointment({ navigation }) {
     }
 
     return (
-        
-        <View style={ styles.container }>
-            <View style={ styles.header }>
-                <Text style={ { fontSize: 20, fontWeight: 'bold' } }>Make Appointment</Text>
+        <SafeAreaView>
+            <View style={ styles.container }>
+                <View style={ styles.header }>
+                    <Text style={ { fontSize: 20, fontWeight: 'bold' } }>Make Appointment</Text>
+                </View>
+                { loading &&
+                    <View>
+                        <Text>loading</Text>
+                    </View>
+                }
+                { error &&
+                    <View>
+                        <Text>error</Text>
+                    </View>
+                }
+                { data &&
+                    <View style={ { paddingHorizontal: 20, paddingTop: 30 } }>
+                        <Text style={ { fontSize: 20, fontWeight: 'bold', marginBottom: 20, alignSelf: 'center' } }>Buat appointment baru :</Text>
+                        <Picker
+                            selectedValue={ itemValue }
+                            style={ { height: 50, backgroundColor: 'white' } }
+                            onValueChange={ (value) => setItemValue(value) }
+                            mode="dropdown"
+                        >
+                            {
+                                data.doctors.map(doctor => (
+                                    <Picker.Item key={ doctor._id } label={ `${ doctor.name } - ${ doctor.polyclinic }` } value={ doctor } />
+                                ))
+                            }
+                        </Picker>
+                        <TouchableOpacity onPress={ submit } style={ { ...styles.button, backgroundColor: 'blue' } }>
+                            <Text style={ { ...styles.buttonText, color: 'white' } }>Submit</Text>
+                        </TouchableOpacity>
+                    </View>
+                }
             </View>
-            { loading && 
-                <View>
-                    <Text>loading</Text>
-                </View>
-            }
-            { error && 
-                <View>
-                    <Text>error</Text>
-                </View>
-            }
-            { data && 
-                <View style={ { paddingHorizontal: 20, paddingTop: 30 } }>
-                    <Text style={ { fontSize: 20, fontWeight: 'bold', marginBottom: 20, alignSelf: 'center' } }>Buat appointment baru :</Text>
-                    <Picker
-                        selectedValue={ itemValue }
-                        style={ { height: 50, backgroundColor: 'white' } }
-                        onValueChange={ (value) => setItemValue(value) }
-                        mode="dropdown"
-                    >
-                        {
-                            data.doctors.map(doctor => (
-                                <Picker.Item key={ doctor._id } label={ `${ doctor.name } - ${ doctor.polyclinic }` } value={ doctor } />
-                            ))
-                        }
-                    </Picker>
-                    <TouchableOpacity onPress={ submit } style={ { ...styles.button, backgroundColor: 'blue' } }>
-                        <Text style={ { ...styles.buttonText, color: 'white' } }>Submit</Text>
-                    </TouchableOpacity>
-                </View>
-            }
-        </View>
+        </SafeAreaView>
     )
 }
 

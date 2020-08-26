@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
-import { gql, useQuery, useSubscription  } from '@apollo/client'
+import { gql, useQuery, useSubscription } from '@apollo/client'
 import client, { IS_LOGIN, LOCAL_USER, GET_USERS } from "../config/apolloClient"
 
 const GET_APPOINTMENTS = gql`
@@ -14,6 +14,7 @@ const GET_APPOINTMENTS = gql`
       doctor{
         name
         polyclinic
+        _id
       }
       user{
         email
@@ -59,33 +60,23 @@ export default function Home({ navigation }) {
     // const { data: subscription, loading } = useSubscription(SUBSCRIBE_NEW_APPOINTMENT)
 
     useEffect(() => {
-        subscribeToMore({
-            document: SUBSCRIBE_NEW_APPOINTMENT,
-            updateQuery(prev, { subscriptionData }) {
-                if (!subscriptionData.data) {
-                    return prev;
-                }
-                const newAppointment = subscriptionData.data.newAppointment
-
-                return {
-                    ...prev,
-                    appointments: [ ...prev.appointments, newAppointment ],
-                };
-            },
-        })
-        if ( !loading && data ) {
+        if (!loading && data) {
+            console.log(data.appointments)
             const findQuery = data.appointments.find(appointment => (
-                appointment.user[ 0 ].email === isLogin.data.isLogin.email
+                appointment.user && appointment.user[ 0 ].email === isLogin.data.isLogin.email && appointment.status !== "done"
             ))
+
             if (findQuery) {
                 const findOnProcess = data.appointments.find(appointment => (
                     appointment.status === "on process" && findQuery.doctor[ 0 ]._id === appointment.doctorId
                 ))
+                console.log(data.appointments, "=======ini data appointment", findOnProcess)
                 if (findOnProcess) {
+
                     setCurrentQueue(findOnProcess.queueNumber)
                     setPoli(findOnProcess.doctor[ 0 ].polyclinic)
                 }
-    
+
                 setUserLoginData(findQuery)
                 setHasQueueNumber(true)
             } else {
@@ -111,7 +102,23 @@ export default function Home({ navigation }) {
                 }
             })
         }
-    }, [ subscribeToMore, data, loading ])
+    }, [ data, loading ])
+
+    useEffect(() => {
+        subscribeToMore({
+            document: SUBSCRIBE_NEW_APPOINTMENT,
+            updateQuery(prev, { subscriptionData }) {
+                if (!subscriptionData.data) {
+                    return prev;
+                }
+                const newAppointment = subscriptionData.data.newAppointment
+                return {
+                    ...prev,
+                    appointments: [ ...prev.appointments, newAppointment ],
+                };
+            },
+        })
+    }, [])
 
     function makeAppointment(event) {
         event.preventDefault()
@@ -120,22 +127,22 @@ export default function Home({ navigation }) {
 
     return (
         <View style={ styles.container }>
-            <View style={styles.header}>
-                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Queue Info</Text>
+            <View style={ styles.header }>
+                <Text style={ { fontSize: 20, fontWeight: 'bold' } }>Queue Info</Text>
             </View>
-            { loading && 
+            { loading &&
                 <View>
                     <Text>loading</Text>
                 </View>
             }
-            { error && 
+            { error &&
                 <View>
                     <Text>error</Text>
                 </View>
             }
-            { data && 
-            <View>
-                { !hasQueueNumber ?
+            { data &&
+                <View>
+                    { !hasQueueNumber ?
                         <TouchableOpacity style={ { ...styles.button, backgroundColor: 'blue' } }>
                             <Text onPress={ makeAppointment } style={ { ...styles.buttonText, color: 'white' } }>Make Appointment</Text>
                         </TouchableOpacity> :
@@ -172,8 +179,8 @@ export default function Home({ navigation }) {
                             </View>
 
                         </View>
-                }
-            </View>
+                    }
+                </View>
             }
         </View>
     )

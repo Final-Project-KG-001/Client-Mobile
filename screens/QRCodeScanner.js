@@ -23,18 +23,18 @@ const ADD_GENERAL = gql`
 `;
 
 export default function QRCodeScanner() {
-  const [permission, setPermission] = useState(null);
-  const [scanned, setScanned] = useState(false);
+  const [ permission, setPermission ] = useState(null);
+  const [ scanned, setScanned ] = useState(false);
 
   const { loading, error, data } = useQuery(GET_APPOINTMENTS, {
     variables: { access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNDQ1OGIwMGRmZmMwMTAzNGM1NzVjMiIsImVtYWlsIjoidXNlcjFAbWFpbC5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTU5ODM1NDM4OH0.JFp1Q2TrZon4-myDvxjA4jxsmpKqihTVyhq8iYWQsNw" },
   });
 
 
-  const [appointments, setAppointment] = useState([]);
+  const [ appointments, setAppointment ] = useState([]);
 
-  const [addDental] = useMutation(ADD_DENTAL);
-  const [addGeneral] = useMutation(ADD_GENERAL);
+  const [ addDental ] = useMutation(ADD_DENTAL);
+  const [ addGeneral ] = useMutation(ADD_GENERAL);
 
   useEffect(() => {
     (async () => {
@@ -44,33 +44,32 @@ export default function QRCodeScanner() {
   }, []);
 
   useEffect(() => {
-    if(!loading && data) {
+    if (!loading && data) {
       setAppointment(data.appointments);
     }
-  }, [loading, data]);
+  }, [ loading, data ]);
 
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-    console.log(`Bar code with type ${type} and data ${data} has been scanned!`);
+    alert(`Bar code with type ${ type } and data ${ data } has been scanned!`);
+    console.log(`Bar code with type ${ type } and data ${ data } has been scanned!`);
     //Handle buat post ke dental/general
     appointments.map((appointment) => {
-      console.log(appointment)
-      if(data === appointment.userId && appointment.status === 'waiting') {
-        if(appointment.doctor[0].polyclinic === 'umum') {
+      if (data === appointment.userId && appointment.status === 'waiting') {
+        if (appointment.doctor[ 0 ].polyclinic === 'umum') {
           addGeneral({
             variables: {
               access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNDQ1ZGMzMTIxZjkwZjAxYWNjNDdlZSIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTgzODY0OTZ9.1ruuq_cTkdpiy5Wf_r430AQYgWK5UsC3HnBtpMwYzQ4",
               appointmentId: appointment._id
             }
           });
-        } else if(appointment.doctor[0].polyclinic === 'gigi') {
+        } else if (appointment.doctor[ 0 ].polyclinic === 'gigi') {
           addDental({
             variables: {
               access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNDQ1ZGMzMTIxZjkwZjAxYWNjNDdlZSIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTgzODY0OTZ9.1ruuq_cTkdpiy5Wf_r430AQYgWK5UsC3HnBtpMwYzQ4",
               appointmentId: appointment._id
             }
-          }); 
+          });
         }
       }
     })
@@ -82,21 +81,21 @@ export default function QRCodeScanner() {
 
   return (
     <View
-      style={{ flex: 1, backgroundColor: "white", justifyContent: "center" }}
+      style={ { flex: 1, backgroundColor: "white", justifyContent: "center" } }
     >
-      <Text style={{ fontWeight: "bold", fontSize: 30, textAlign: "center" }}>
+      <Text style={ { fontWeight: "bold", fontSize: 30, textAlign: "center" } }>
         QR Code Scanner
       </Text>
-      <View style={{ flex: 0.9, margin: 0 }}>
+      <View style={ { flex: 0.9, margin: 0 } }>
         <BarCodeScanner
-          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-          style={StyleSheet.absoluteFillObject}
+          onBarCodeScanned={ scanned ? undefined : handleBarCodeScanned }
+          style={ StyleSheet.absoluteFillObject }
         />
       </View>
-      {scanned && (
-        <Button title={"Tap to Scan Again"} onPress={() => setScanned(false)} style={{ marginHorizontal: 20}}/>
-      )}
-      {!scanned && <Text style={{textAlign: "center", fontSize: 20}}>Scanning...</Text>}
+      { scanned && (
+        <Button title={ "Tap to Scan Again" } onPress={ () => setScanned(false) } style={ { marginHorizontal: 20 } } />
+      ) }
+      { !scanned && <Text style={ { textAlign: "center", fontSize: 20 } }>Scanning...</Text> }
     </View>
   );
 }

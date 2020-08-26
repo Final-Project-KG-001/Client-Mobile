@@ -12,21 +12,21 @@ const REGISTER = gql`
 `
 
 export default function Register({ navigation }) {
-    const [error, setError] = useState({ message: 'field tidak boleh kosong' })
-    const [name, setName] = useState('')
-    const [dob, setDob] = useState(new Date())
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [phoneNumber, setPhoneNumber] = useState('')
+    const [ error, setError ] = useState({ message: '' })
+    const [ name, setName ] = useState('')
+    const [ dob, setDob ] = useState(new Date())
+    const [ email, setEmail ] = useState('')
+    const [ password, setPassword ] = useState('')
+    const [ phoneNumber, setPhoneNumber ] = useState('')
 
     async function register(event) {
         event.preventDefault()
         try {
             let phone = null
-            if(phoneNumber.length > 10) {
+            if (phoneNumber.length > 10) {
                 setError({})
                 const firstNumber = phoneNumber.slice(0, 3)
-                if(phoneNumber[0] === '0' || firstNumber === '+62') {
+                if (phoneNumber[ 0 ] === '0' || firstNumber === '+62') {
                     phone = phoneNumber.slice(1, phoneNumber.length)
                 } else {
                     phone = '62' + phoneNumber
@@ -61,36 +61,36 @@ export default function Register({ navigation }) {
             <View style={ styles.div_register }>
                 <Text style={ { fontWeight: 'bold', fontSize: 30, alignSelf: 'center', marginBottom: 5, color: "#3b6978" } }>Register</Text>
                 <TextInput onChangeText={ (text) => setName(text) } placeholder="Your Name" style={ styles.textInput } placeholderTextColor="#838383" />
-                <Text style={{ marginLeft: 30, color: "#3b6978"}}>Date Of Birth</Text>
+                <Text style={ { marginLeft: 30, color: "#3b6978" } }>Date Of Birth</Text>
                 <DatePicker
-                    style={{ alignSelf: 'center', width: 320}}
-                    date={dob}
+                    style={ { alignSelf: 'center', width: 320 } }
+                    date={ dob }
                     mode="date"
                     placeholder="Date of Birth"
                     format="YYYY-M-D"
-                    maxDate= {new Date()}
+                    maxDate={ new Date() }
                     confirmBtnText="Confirm"
                     cancelBtnText="Cancel"
-                    customStyles={{
-                    dateIcon: {
-                        position: 'relative',
-                        left: 0,
-                        top: 4,
-                        marginLeft: 0
-                    },
-                    dateInput: {
-                        marginLeft: 36
-                    }
-                    // ... You can check the source to find the other keys.
-                    }}
-                    onDateChange={(date) => {setDob(date)}}
+                    customStyles={ {
+                        dateIcon: {
+                            position: 'relative',
+                            left: 0,
+                            top: 4,
+                            marginLeft: 0
+                        },
+                        dateInput: {
+                            marginLeft: 36
+                        }
+                        // ... You can check the source to find the other keys.
+                    } }
+                    onDateChange={ (date) => { setDob(date) } }
                 />
                 {/* <TextInput onChangeText={ (text) => setDob(text) } placeholder="Date of Birth" style={ styles.textInput } placeholderTextColor="#838383">
                 </TextInput> */}
                 <TextInput onChangeText={ (text) => setEmail(text) } placeholder="Email" style={ styles.textInput } placeholderTextColor="#838383" />
-                <TextInput secureTextEntry={true} onChangeText={ (text) => setPassword(text) } placeholder="Password" style={ styles.textInput } placeholderTextColor="#838383" />
+                <TextInput secureTextEntry={ true } onChangeText={ (text) => setPassword(text) } placeholder="Password" style={ styles.textInput } placeholderTextColor="#838383" />
                 <TextInput onChangeText={ (text) => setPhoneNumber(text) } placeholder="Phone Number" style={ styles.textInput } placeholderTextColor="#838383" />
-                { error && <Text style= {{alignSelf: "center", color: "#3b6978"}}>{error.message}</Text> }
+                { error && <Text style={ { alignSelf: "center", color: "#3b6978" } }>{ error.message }</Text> }
                 <TouchableOpacity onPress={ register } style={ { ...styles.button, backgroundColor: '#ea8685' } }>
                     <Text style={ { ...styles.buttonText, color: 'white' } }>Submit</Text>
                 </TouchableOpacity>
