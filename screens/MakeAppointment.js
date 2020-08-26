@@ -26,6 +26,7 @@ const GET_DATA = gql`
       doctor {
         name
         polyclinic
+        _id
       }
       user {
         name
@@ -44,10 +45,11 @@ export default function MakeAppointment({ navigation }) {
         language: 'javascript',
     };
     const [ itemValue, setItemValue ] = useState('Pilih dokter/poli:')
+    const isLogin = useQuery(IS_LOGIN)
     const { loading, error, data } = useQuery(GET_DATA, {
         variables: { access_token: isLogin.data.isLogin.token },
     })
-    const isLogin = useQuery(IS_LOGIN)
+
     const [ addAppointment, res ] = useMutation(ADD_APPOINTMENT)
 
     async function submit() {
@@ -70,8 +72,10 @@ export default function MakeAppointment({ navigation }) {
                 await addAppointment({
                     variables: {
                         doctorId: itemValue._id,
-                        queueNumber: Number(1)
-                    }
+                        queueNumber: Number(1),
+                        access_token: isLogin.data.isLogin.token,
+                    },
+                    refetchQueries: [ "GetAppointments" ]
                 })
                 navigation.navigate('Homepage')
             }

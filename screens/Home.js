@@ -72,8 +72,9 @@ export default function Home({ navigation }) {
                     appointment.status === "on process" && findQuery.doctor[ 0 ]._id === appointment.doctorId
                 ))
                 // console.log(data.appointments, "=======ini data appointment", findOnProcess)
-                if (findOnProcess) {
 
+                // console.log(findOnProcess, "=========")
+                if (findOnProcess) {
                     setCurrentQueue(findOnProcess.queueNumber)
                     setPoli(findOnProcess.doctor[ 0 ].polyclinic)
                 }
@@ -179,7 +180,7 @@ export default function Home({ navigation }) {
                                                     <View style={ styles.contentCard }>
 
                                                         {
-                                                            poli === "umum" ?
+                                                            userLoginData.doctor[ 0 ].polyclinic === "umum" ?
                                                                 <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>A { userLoginData.queueNumber }</Text>
                                                                 :
                                                                 <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>B { userLoginData.queueNumber }</Text>
@@ -209,7 +210,7 @@ export default function Home({ navigation }) {
                                                         <View style={ styles.contentCard }>
 
                                                             {
-                                                                poli === "umum" ? <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>A { userLoginData.queueNumber }</Text> : <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>B { userLoginData.queueNumber }</Text>
+                                                                userLoginData.doctor[ 0 ].polyclinic === "umum" ? <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>A { userLoginData.queueNumber }</Text> : <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>B { userLoginData.queueNumber }</Text>
                                                             }
                                                         </View>
                                                     </View>
@@ -217,7 +218,7 @@ export default function Home({ navigation }) {
                                                         <Text style={ { color: "#e66767", width: 150, height: 30, textAlign: "center", fontSize: 18 } }>Antrian sekarang</Text>
                                                         <View style={ styles.contentCard }>
                                                             {
-                                                                poli === "umum" ? <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>A { currentQueue }</Text> : <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>B { currentQueue }</Text>
+                                                                userLoginData.doctor[ 0 ].polyclinic === "umum" ? <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>A { currentQueue }</Text> : <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>B { currentQueue }</Text>
                                                             }
                                                         </View>
                                                     </View>
