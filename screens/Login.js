@@ -24,8 +24,8 @@ export default function Login({ navigation }) {
     const [ password, setPassword ] = useState('')
 
     const isLogin = useQuery(IS_LOGIN)
-    const [loginUser, resultLoginUser] = useMutation(LOGIN_USER)
-    const [loginAdmin, resultLoginAdmin] = useMutation(LOGIN_ADMIN)
+    const [ loginUser, resultLoginUser ] = useMutation(LOGIN_USER)
+    const [ loginAdmin, resultLoginAdmin ] = useMutation(LOGIN_ADMIN)
 
     async function signIn(event) {
         try {
@@ -91,7 +91,7 @@ export default function Login({ navigation }) {
 
     useEffect(() => {
         if (isLogin.data.isLogin.token !== "") {
-            if(isLogin.data.isLogin.email === 'admin@mail.com') {
+            if (isLogin.data.isLogin.email === 'admin@mail.com') {
                 navigation.navigate('Admin')
             } else {
                 navigation.navigate('Dashboard')
