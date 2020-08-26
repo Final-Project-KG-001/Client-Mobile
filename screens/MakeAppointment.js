@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
-import { useQuery, gql, useMutation } from '@apollo/client'
-import { GET_DOCTORS, GET_APPOINTMENTS } from '../config/apolloClient'
+import { useQuery, useMutation, gql } from '@apollo/client'
+import { IS_LOGIN } from '../config/apolloClient'
 import { Picker } from 'react-native-picker-dropdown'
 
 const ADD_APPOINTMENT = gql`
@@ -12,55 +12,90 @@ const ADD_APPOINTMENT = gql`
     }
 `
 
+
+const GET_DATA = gql`
+  query GetData($access_token: String) {
+    appointments(access_token: $access_token) {
+      _id
+      userId
+      doctorId
+      queueNumber
+      status
+      createdAt
+      doctor {
+        name
+        polyclinic
+      }
+      user {
+        name
+      }
+    }
+    doctors(access_token: $access_token) {
+        _id
+        name
+        polyclinic
+    }
+  }
+`
+
 export default function MakeAppointment({ navigation }) {
     state = {
         language: 'javascript',
     };
     const [ itemValue, setItemValue ] = useState('Pilih dokter/poli:')
-
-    const doctors = useQuery(GET_DOCTORS)
-    const appointments = useQuery(GET_APPOINTMENTS)
+    const { loading, error, data } = useQuery(GET_DATA, {
+        variables: { access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNDQ1ZGMzMTIxZjkwZjAxYWNjNDdlZSIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTgzNjk3ODZ9.rrF50fYJwJyXE9GeZSIAaDyvqprw0GG3YymtM4mv3XE" },
+    })
+    const isLogin = useQuery(IS_LOGIN)
     const [ addAppointment, res ] = useMutation(ADD_APPOINTMENT)
 
     async function submit() {
         try {
-            const sortByPoly = appointments.data.appointments.filter(x => (x.doctor[0].polyclinic === itemValue.polyclinic))
-            // console.log(sortByPoly)
+            const sortByPoly = data.appointments.filter(x => (x.doctor[0].polyclinic === itemValue.polyclinic))
+            console.log('ini data login - ',isLogin.data.isLogin.token)
+            console.log('ini sort by - ',sortByPoly.length + 1)
+            console.log('ini doctor id - ', itemValue._id)
             if (sortByPoly.length > 0) {
-                // console.log('jalan yang ada', sortByPoly.length)
-                // console.log(Number(sortByPoly.length + 1), itemValue._id)
                 await addAppointment({
                     variables: {
                         doctorId: itemValue._id,
-                        queueNumber: Number(sortByPoly.length + 1)
+                        queueNumber: Number(sortByPoly.length + 1),
+                        access_token: isLogin.data.isLogin.token
                     },
                     refetchQueries: [ "GetAppointments" ]
                 })
-                console.log("ini berhasilll=================", res)
                 navigation.navigate('Homepage')
             } else {
-                // console.log('jalan yang ga ada')
                 await addAppointment({
                     variables: {
                         doctorId: itemValue._id,
                         queueNumber: Number(1)
-                    },
-                    refetchQueries: [ "GetAppointments" ]
+                    }
                 })
-                console.log("ini berhasilll=================", res)
                 navigation.navigate('Homepage')
             }
         } catch (err) {
-            console.log("ini errorrr", err.message)
+            console.log("ini errorrr", err)
         }
     }
 
     return (
+        
         <View style={ styles.container }>
             <View style={ styles.header }>
                 <Text style={ { fontSize: 20, fontWeight: 'bold' } }>Make Appointment</Text>
             </View>
-            { doctors.data &&
+            { loading && 
+                <View>
+                    <Text>loading</Text>
+                </View>
+            }
+            { error && 
+                <View>
+                    <Text>error</Text>
+                </View>
+            }
+            { data && 
                 <View style={ { paddingHorizontal: 20, paddingTop: 30 } }>
                     <Text style={ { fontSize: 20, fontWeight: 'bold', marginBottom: 20, alignSelf: 'center' } }>Buat appointment baru :</Text>
                     <Picker
@@ -70,7 +105,7 @@ export default function MakeAppointment({ navigation }) {
                         mode="dropdown"
                     >
                         {
-                            doctors.data.doctors.map(doctor => (
+                            data.doctors.map(doctor => (
                                 <Picker.Item key={ doctor._id } label={ `${ doctor.name } - ${ doctor.polyclinic }` } value={ doctor } />
                             ))
                         }

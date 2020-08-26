@@ -60,8 +60,8 @@ export default function FormEditProfile({user, updateuser}) {
             <TextInput onChangeText={(text) => setName(text)} placeholder="Your Name" style={styles.textInput} placeholderTextColor="black"/>
             <TextInput onChangeText={(text) => setDob(text)} placeholder="Date of Birth" style={styles.textInput} placeholderTextColor="black"/>
             <TextInput onChangeText={(text) => setPhoneNumber(text)} placeholder="Phone Number" style={styles.textInput} placeholderTextColor="black"/>
-            <TouchableOpacity onPress={editUser} style={{ ...styles.button, backgroundColor: 'blue' }}>
-                <Text style={{ ...styles.buttonText, color: 'white' }}>Submit</Text>
+            <TouchableOpacity onPress={editUser} style={{ ...styles.button, backgroundColor: '#c8d5b9' }}>
+                <Text style={{ ...styles.buttonText, color: 'black' }}>Submit</Text>
             </TouchableOpacity>
         </View>
     )
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     textInput: {
-        backgroundColor: 'white',
+        backgroundColor: '#eae7dc',
         height: 50,
         borderBottomWidth: 1,
         marginHorizontal: 35,
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     contentCard: {
         marginTop: 20,
         height: 400,
-        backgroundColor: 'white',
+        backgroundColor: '#eae7dc',
         borderRadius: 20,
         justifyContent: 'center'
     }
