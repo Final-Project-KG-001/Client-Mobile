@@ -25,9 +25,12 @@ const ADD_GENERAL = gql`
 export default function QRCodeScanner() {
   const [ permission, setPermission ] = useState(null);
   const [ scanned, setScanned ] = useState(false);
+  const isLogin = useQuery(IS_LOGIN)
+
+  console.log(isLogin.data)
 
   const { loading, error, data } = useQuery(GET_APPOINTMENTS, {
-    variables: { access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNDQ1OGIwMGRmZmMwMTAzNGM1NzVjMiIsImVtYWlsIjoidXNlcjFAbWFpbC5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTU5ODM1NDM4OH0.JFp1Q2TrZon4-myDvxjA4jxsmpKqihTVyhq8iYWQsNw" },
+    variables: { access_token: isLogin.data.isLogin.token },
   });
 
 
@@ -59,14 +62,14 @@ export default function QRCodeScanner() {
         if (appointment.doctor[ 0 ].polyclinic === 'umum') {
           addGeneral({
             variables: {
-              access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNDQ1ZGMzMTIxZjkwZjAxYWNjNDdlZSIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTgzODY0OTZ9.1ruuq_cTkdpiy5Wf_r430AQYgWK5UsC3HnBtpMwYzQ4",
+              access_token: isLogin.data.isLogin.token,
               appointmentId: appointment._id
             }
           });
         } else if (appointment.doctor[ 0 ].polyclinic === 'gigi') {
           addDental({
             variables: {
-              access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNDQ1ZGMzMTIxZjkwZjAxYWNjNDdlZSIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTgzODY0OTZ9.1ruuq_cTkdpiy5Wf_r430AQYgWK5UsC3HnBtpMwYzQ4",
+              access_token: isLogin.data.isLogin.token,
               appointmentId: appointment._id
             }
           });
@@ -81,26 +84,37 @@ export default function QRCodeScanner() {
 
   return (
     <View
-      style={ { flex: 1, backgroundColor: "white", justifyContent: "center" } }
+      style={ { flex: 1, backgroundColor: "black"} }
     >
-      <Text style={ { fontWeight: "bold", fontSize: 30, textAlign: "center" } }>
-        QR Code Scanner
-      </Text>
-      <View style={ { flex: 0.9, margin: 0 } }>
+      <View style={ styles.header }>
+          <Text style={ { fontSize: 20, fontWeight: 'bold' } }>QRCode Scanner</Text>
+      </View>
+      <View style={ { flex: 0.9, margin: 0  } }>
         <BarCodeScanner
           onBarCodeScanned={ scanned ? undefined : handleBarCodeScanned }
-          style={ StyleSheet.absoluteFillObject }
+          style={ StyleSheet.absoluteFill }
         />
       </View>
       { scanned && (
         <Button title={ "Tap to Scan Again" } onPress={ () => setScanned(false) } style={ { marginHorizontal: 20 } } />
       ) }
-      { !scanned && <Text style={ { textAlign: "center", fontSize: 20 } }>Scanning...</Text> }
+      { !scanned && <Text style={ { textAlign: "center", fontSize: 20, color: 'white' } }>Scanning...</Text> }
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#ffcccc'
+  },
+  header: {
+      backgroundColor: '#e66767',
+      height: 80,
+      alignItems: 'center',
+      paddingTop: 40,
+      marginBottom: 10
+  },
   droidSafeArea: {
     flex: 1,
     paddingTop: Platform.OS === "android" ? 25 : 0,

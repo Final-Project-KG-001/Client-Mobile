@@ -1,8 +1,11 @@
 import React from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
-import { IS_LOGIN } from '../config/apolloClient'
+import client, { IS_LOGIN } from '../config/apolloClient'
+import { useQuery } from '@apollo/client';
 
 export default function Admin({ navigation }) {
+    const isLogin = useQuery(IS_LOGIN)
+
     function toQRScan(event) {
         event.preventDefault();
         navigation.navigate("QRCodeScan");
@@ -17,7 +20,7 @@ export default function Admin({ navigation }) {
             data: {
                 isLogin: {
                     token: "",
-                    email: ""
+                    email: isLogin.data.isLogin.email
                 }
             }
         })
