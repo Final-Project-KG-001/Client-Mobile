@@ -12,7 +12,7 @@ const REGISTER = gql`
 `
 
 export default function Register({ navigation }) {
-    const [ error, setError ] = useState({ message: '' })
+    const [ error, setError ] = useState({})
     const [ name, setName ] = useState('')
     const [ dob, setDob ] = useState(new Date())
     const [ email, setEmail ] = useState('')
@@ -25,18 +25,17 @@ export default function Register({ navigation }) {
         // event.preventDefault()
         try {
             let phone = null
-            if (phoneNumber.length > 10) {
-                setError({})
-                const firstNumber = phoneNumber.slice(0, 3)
-                if (phoneNumber[ 0 ] === '0' || firstNumber === '+62') {
-                    phone = phoneNumber.slice(1, phoneNumber.length)
+            if (phoneNumber.length > 3) {
+                const firstNumber = phoneNumber.slice(0, 2)
+                if (phoneNumber[ 0 ] === '0') {
+                    phone = '62' + phoneNumber.slice(1, phoneNumber.length)
+                } else if(firstNumber === '62') {
+                    phone = phoneNumber
                 } else {
                     phone = '62' + phoneNumber
                 }
-            } else {
-                setError({ message: 'Phone number at least 10 characters' })
             }
-            if (name == '' || email == '' || password == '') {
+            if (name == '' || email == '' || password == '' || phoneNumber == '') {
                 setError({ message: 'Any field cannot be empty!' })
             } else {
                 setError({})
@@ -64,10 +63,8 @@ export default function Register({ navigation }) {
                 <Text style={ { fontWeight: 'bold', fontSize: 30, alignSelf: 'center', marginBottom: 5, color: "#3b6978" } }>Register</Text>
                 <TextInput onChangeText={ (text) => setName(text) } placeholder="Your Name" style={ styles.textInput } placeholderTextColor="#838383" />
                 {/* <Text style={ { marginLeft: 30, color: "#3b6978" } }>Date Birth</Text> */ }
-
-
                 <DatePicker
-                    style={ { ...styles.textInput, alignSelf: 'center', width: 320, borderRadius: 25, backgroundColor: "white" } }
+                    style={ { ...styles.textInput, alignSelf: 'center', width: 310, borderRadius: 25, backgroundColor: "white" } }
                     date={ dob }
                     mode="date"
                     placeholder="Date of Birth"
@@ -99,7 +96,7 @@ export default function Register({ navigation }) {
                 </TextInput> */}
                 <TextInput onChangeText={ (text) => setEmail(text) } placeholder="Email" style={ styles.textInput } placeholderTextColor="#838383" />
                 <TextInput secureTextEntry={ true } onChangeText={ (text) => setPassword(text) } placeholder="Password" style={ styles.textInput } placeholderTextColor="#838383" />
-                <TextInput onChangeText={ (text) => setPhoneNumber(text) } placeholder="Phone Number" style={ styles.textInput } placeholderTextColor="#838383" />
+                <TextInput onChangeText={ (text) => setPhoneNumber(text) } keyboardType = 'number-pad' placeholder="Phone Number" style={ styles.textInput } placeholderTextColor="#838383" />
                 { error && <Text style={ { alignSelf: "center", color: "red", margin: 10 } }>{ error.message }</Text> }
                 <TouchableOpacity onPress={ register } style={ { ...styles.button, backgroundColor: '#ea8685' } }>
                     <Text style={ { ...styles.buttonText, color: 'white' } }>Submit</Text>

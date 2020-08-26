@@ -9,14 +9,14 @@ export default function DoctorCard({ doctor }) {
                     position: 'absolute', flex: 1, height: 85, width: 85, borderRadius: 40, borderColor: 'white', borderWidth: 3, margin: 6
                 } } />
                 <Text style={ { marginLeft: 100, marginTop: 7, fontSize: 20, fontWeight: 'bold' } }>Dr. Fatimah Hidayani</Text>
-                <Text style={ { marginLeft: 100 } }>Dental</Text>
+                <Text style={ { marginLeft: 100 } }>Poli Umum</Text>
             </View>
             <View style={ styles.container }>
-                <Image source={{ uri: 'https://v.fastcdn.co/u/2fdba1a6/23428726-0-Assoc.-Prof.-Dr.-Han.jpg' }} style={ {
+                <Image source={{ uri: 'https://v.fastcdn.co/u/2fdba1a6/23428726-0-Assoc.-Prof.-Dr.-Han.jpg' }} resizeMode="center" style={ {
                     position: 'absolute', flex: 1, height: 85, width: 85, borderRadius: 40, borderColor: 'white', borderWidth: 3, margin: 6
                 } } />
                 <Text style={ { marginLeft: 100, marginTop: 7, fontSize: 20, fontWeight: 'bold' } }>Dr. Hary Tungadi</Text>
-                <Text style={ { marginLeft: 100 } }>General</Text>
+                <Text style={ { marginLeft: 100 } }>Poli Gigi</Text>
             </View>
         </View>
     )

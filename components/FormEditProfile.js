@@ -77,7 +77,7 @@ export default function FormEditProfile({ user, updateuser }) {
             <TextInput onChangeText={ (text) => setName(text) } placeholder="Your Name" style={ styles.textInput } placeholderTextColor="black" />
             <Text style={ { marginLeft: 45, marginBottom: 10, marginTop: 20 } }>Date Of Birth</Text>
             <DatePicker
-                style={ { alignSelf: 'center', width: 320, marginBottom: 10, width: 290, borderBottomWidth: 1 } }
+                style={ { alignSelf: 'center', marginBottom: 10, width: 270, borderBottomWidth: 1 } }
                 date={ dob }
                 mode="date"
                 placeholder="Date of Birth"
