@@ -52,17 +52,15 @@ export default function Home({ navigation }) {
 
     const isLogin = useQuery(IS_LOGIN)
     const users = useQuery(GET_USERS, {
-        variables: { access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNDQ1ZGMzMTIxZjkwZjAxYWNjNDdlZSIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTgzNjk3ODZ9.rrF50fYJwJyXE9GeZSIAaDyvqprw0GG3YymtM4mv3XE" },
+        variables: { access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNDQ1ZGMzMTIxZjkwZjAxYWNjNDdlZSIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTg0NDQwMDF9.Mn8pujByONz4RZwRcshMzeFRhViVMrFnKhuWv5xPr9Y" },
     })
 
     const { loading, error, data, subscribeToMore } = useQuery(GET_APPOINTMENTS, {
         variables: { access_token: isLogin.data.isLogin.token },
     })
-    // const { data: subscription, loading } = useSubscription(SUBSCRIBE_NEW_APPOINTMENT)
 
     useEffect(() => {
         if (!loading && data) {
-            // console.log(data.appointments)
             const findQuery = data.appointments.find(appointment => (
                 appointment.user && appointment.user[ 0 ].email === isLogin.data.isLogin.email && appointment.status !== "done"
             ))
@@ -71,9 +69,6 @@ export default function Home({ navigation }) {
                 const findOnProcess = data.appointments.find(appointment => (
                     appointment.status === "on process" && findQuery.doctor[ 0 ]._id === appointment.doctorId
                 ))
-                // console.log(data.appointments, "=======ini data appointment", findOnProcess)
-
-                // console.log(findOnProcess, "=========")
                 if (findOnProcess) {
                     setCurrentQueue(findOnProcess.queueNumber)
                     setPoli(findOnProcess.doctor[ 0 ].polyclinic)
@@ -105,7 +100,6 @@ export default function Home({ navigation }) {
             })
         }
     }, [ data, loading ])
-    // console.log(hasQueueNumber)
 
     useEffect(() => {
         subscribeToMore({
@@ -133,7 +127,6 @@ export default function Home({ navigation }) {
     // }
 
 
-
     function makeAppointment(event) {
         event.preventDefault()
         navigation.navigate('MakeAppointment')
@@ -146,12 +139,12 @@ export default function Home({ navigation }) {
             </View>
             { loading &&
                 <View>
-                    <Text>loading</Text>
+                    <Text style={ { fontSize: 20, fontWeight: 'bold', alignSelf: 'center', marginTop: 30, color: "#838383" } }>Loading..</Text>
                 </View>
             }
             { error &&
                 <View>
-                    <Text>error</Text>
+                    <Text style={ { fontSize: 20, fontWeight: 'bold', alignSelf: 'center', marginTop: 30, color: "#838383" } }>Oooops... Please Reload Your App</Text>
                 </View>
             }
             { data &&

@@ -55,14 +55,14 @@ export default function Profile({ navigation }) {
     return (
         <SafeAreaView>
         <View style={ styles.container }>
-            { loading && 
+            { loading &&
                 <View>
-                    <Text>loading</Text>
+                    <Text style={ { fontSize: 20, fontWeight: 'bold', alignSelf: 'center', marginTop: 30, color: "#838383" } }>Loading..</Text>
                 </View>
             }
-            { error && 
+            { error &&
                 <View>
-                    <Text>error</Text>
+                    <Text style={ { fontSize: 20, fontWeight: 'bold', alignSelf: 'center', marginTop: 30, color: "#838383" } }>Oooops... Please Reload Your App</Text>
                 </View>
             }
             { data && 
