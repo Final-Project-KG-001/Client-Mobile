@@ -124,8 +124,8 @@ export default function MakeAppointment({ navigation }) {
             }
             { data &&
                 <View style={ { paddingHorizontal: 20, paddingTop: 30 } }>
-                    <Text style={ { fontSize: 18, color: "#838383", fontWeight: 'bold', marginBottom: 20, alignSelf: 'center' } }>You don't have any appointment today</Text>
-                    <Text style={ { color: "#838383", fontWeight: 'bold', marginBottom: 20, alignSelf: 'center', textAlign: "center" } }>Please make a new appointment to consult with our doctors</Text>
+                    <Text style={ { fontSize: 18, color: "#838383", fontWeight: 'bold', marginBottom: 20, alignSelf: 'center' } }>Kamu belum memiliki appointment.</Text>
+                    <Text style={ { color: "#838383", fontWeight: 'bold', marginBottom: 20, alignSelf: 'center' } }>Silahkan membuat appointment baru untuk masuk dalam daftar antrian hari ini.</Text>
                     <Picker
                         placeholder="Klik untuk pilih dokter ..."
                         selectedValue={ itemValue }
@@ -140,7 +140,7 @@ export default function MakeAppointment({ navigation }) {
                         }
                     </Picker>
                     <TouchableOpacity onPress={ submit } style={ { ...styles.button, backgroundColor: '#ea8685' } }>
-                        <Text style={ { ...styles.buttonText, color: 'white' } }>Add</Text>
+                        <Text style={ { ...styles.buttonText, color: 'white' } }>Tambahkan</Text>
                     </TouchableOpacity>
                     <View style={ { alignItems: 'center', padding: 0, marginTop: 40 } }>
                         <Image source={ require('../assets/appointment.png') } style={ styles.picture } />
