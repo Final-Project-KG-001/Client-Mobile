@@ -15,7 +15,7 @@ export default function HomeNavigation() {
       }}
       headerMode="none"
     >
-      <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="Homepage" component={Home} />
       <Stack.Screen name="MakeAppointment" component={MakeAppointment} />
     </Stack.Navigator>
   )

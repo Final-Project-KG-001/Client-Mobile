@@ -1,29 +1,79 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native'
-import { useQuery, gql } from '@apollo/client'
-import { GET_APPOINTMENTS, IS_LOGIN } from "../config/apolloClient"
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { gql, useQuery, useSubscription } from '@apollo/client'
+import client, { IS_LOGIN, LOCAL_USER, GET_USERS } from "../config/apolloClient"
 
-export default function Home({ route, navigation }) {
+const GET_APPOINTMENTS = gql`
+  query GetAppointments ($access_token:String) {
+    appointments (access_token: $access_token) {
+      _id
+      userId
+      queueNumber
+      status
+      doctorId
+      doctor{
+        name
+        polyclinic
+        _id
+      }
+      user{
+        email
+        name
+      }
+    }
+}
+`
+
+const SUBSCRIBE_NEW_APPOINTMENT = gql`
+  subscription newAppointment {
+    newAppointment {
+      _id
+      userId
+      doctorId
+      queueNumber
+      status
+      doctor{
+        name
+      }
+      user{
+        email
+        name
+      }
+    }
+  }
+`;
+
+export default function Home({ navigation }) {
     const [ userLoginData, setUserLoginData ] = useState("")
     const [ hasQueueNumber, setHasQueueNumber ] = useState(false)
     const [ currentQueue, setCurrentQueue ] = useState(0)
     const [ poli, setPoli ] = useState("")
-    const { loading, error, data } = useQuery(GET_APPOINTMENTS)
+    const [ show, setShow ] = useState(true)
 
     const isLogin = useQuery(IS_LOGIN)
+    const users = useQuery(GET_USERS, {
+        variables: { access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNDQ1ZGMzMTIxZjkwZjAxYWNjNDdlZSIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTgzNjk3ODZ9.rrF50fYJwJyXE9GeZSIAaDyvqprw0GG3YymtM4mv3XE" },
+    })
+
+    const { loading, error, data, subscribeToMore } = useQuery(GET_APPOINTMENTS, {
+        variables: { access_token: isLogin.data.isLogin.token },
+    })
+    // const { data: subscription, loading } = useSubscription(SUBSCRIBE_NEW_APPOINTMENT)
 
     useEffect(() => {
-        if (data) {
+        if (!loading && data) {
+            // console.log(data.appointments)
             const findQuery = data.appointments.find(appointment => (
-                appointment.user[ 0 ].email === isLogin.data.isLogin.email
+                appointment.user && appointment.user[ 0 ].email === isLogin.data.isLogin.email && appointment.status !== "done"
             ))
+
             if (findQuery) {
-
                 const findOnProcess = data.appointments.find(appointment => (
-
                     appointment.status === "on process" && findQuery.doctor[ 0 ]._id === appointment.doctorId
                 ))
+                // console.log(data.appointments, "=======ini data appointment", findOnProcess)
                 if (findOnProcess) {
+
                     setCurrentQueue(findOnProcess.queueNumber)
                     setPoli(findOnProcess.doctor[ 0 ].polyclinic)
                 }
@@ -33,9 +83,55 @@ export default function Home({ route, navigation }) {
             } else {
                 setHasQueueNumber(false)
             }
-
         }
-    })
+        if (users.data) {
+            const user = users.data.users.find(x => (x.email === isLogin.data.isLogin.email))
+            client.readQuery({
+                query: LOCAL_USER
+            })
+            client.writeQuery({
+                query: LOCAL_USER,
+                data: {
+                    localUser: {
+                        _id: user._id,
+                        name: user.name,
+                        email: user.email,
+                        dob: user.dob,
+                        phoneNumber: user.phoneNumber,
+                        role: user.role
+                    }
+                }
+            })
+        }
+    }, [ data, loading ])
+    // console.log(hasQueueNumber)
+
+    useEffect(() => {
+        subscribeToMore({
+            document: SUBSCRIBE_NEW_APPOINTMENT,
+            updateQuery(prev, { subscriptionData }) {
+                if (!subscriptionData.data) {
+                    return prev;
+                }
+                const newAppointment = subscriptionData.data.newAppointment
+                return {
+                    ...prev,
+                    appointments: [ ...prev.appointments, newAppointment ],
+                };
+            },
+        })
+    }, [])
+
+    // if (userLoginData.queueNumber === currentQueue && userLoginData.status === "on process") {
+
+    //         setInterval(() => {
+
+    //             setShow(!show)
+    //         }, 1000,)
+
+    // }
+
+
 
     function makeAppointment(event) {
         event.preventDefault()
@@ -43,54 +139,104 @@ export default function Home({ route, navigation }) {
     }
 
     return (
-
         <View style={ styles.container }>
-            <View style={styles.header}>
-                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Queue Info</Text>
+            <View style={ styles.header }>
+                <Text style={ { fontSize: 15, fontWeight: 'bold' } }>QMe Board</Text>
             </View>
-            {
-                !hasQueueNumber ?
-                    <TouchableOpacity style={ { ...styles.button, backgroundColor: 'blue' } }>
-                        <Text onPress={ makeAppointment } style={ { ...styles.buttonText, color: 'white' } }>Make Appointment</Text>
-                    </TouchableOpacity> :
-                    <View style={ { display: "flex", alignItems: "center" } }>
-                        <Text style={ { fontSize: 20, fontWeight: 'bold', alignSelf: 'center', marginTop: 30, color: "#838383" } }>Hy { userLoginData.user[ 0 ].name }</Text>
-                        <Text style={ { fontSize: 25, fontWeight: 'bold', alignSelf: 'center', marginTop: 10, color: "#838383" } }>Terima kasih telah menunggu.</Text>
-                        <Text style={ { fontSize: 15, fontWeight: 'bold', alignSelf: 'center', marginTop: 15, color: "#d8d3cd" } }>Berikut informasi posisi antrian kamu:</Text>
-
-                        <View style={ styles.body_indo }>
-                            <View style={ { display: "flex", flexDirection: "row", marginTop: 60 } }>
-                                <View style={ { alignItems: "center" } }>
-                                    <Text style={ { color: "#e66767", width: 150, height: 30, textAlign: "center", fontSize: 18 } }>Antrian kamu</Text>
-                                    <View style={ styles.contentCard }>
-
-                                        {
-                                            poli === "umum" ? <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>A { userLoginData.queueNumber }</Text> : <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>B { userLoginData.queueNumber }</Text>
-                                        }
-                                    </View>
-                                </View>
-                                <View style={ { alignItems: "center" } }>
-                                    <Text style={ { color: "#e66767", width: 150, height: 30, textAlign: "center", fontSize: 18 } }>Antrian sekarang</Text>
-                                    <View style={ styles.contentCard }>
-                                        {
-                                            poli === "umum" ? <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>A { currentQueue }</Text> : <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>B { currentQueue }</Text>
-                                        }
-                                    </View>
-                                </View>
-
-                            </View>
-
-                            <View style={ styles.bottom_info }>
-
-                                <Text style={ { fontSize: 20, fontWeight: 'bold', color: "#838383" } }>Poliklinik pemeriksaan { poli && poli }</Text>
-
-                                <Text style={ { fontSize: 20, fontWeight: 'bold', color: "#838383" } }>oleh  { userLoginData.doctor[ 0 ].name }</Text>
-                            </View>
-                        </View>
-
-                    </View>
+            { loading &&
+                <View>
+                    <Text>loading</Text>
+                </View>
             }
+            { error &&
+                <View>
+                    <Text>error</Text>
+                </View>
+            }
+            { data &&
+                <View>
+                    { !hasQueueNumber ?
+                        <TouchableOpacity style={ { ...styles.button, backgroundColor: 'blue' } }>
+                            <Text onPress={ makeAppointment } style={ { ...styles.buttonText, color: 'white' } }>Make Appointment</Text>
+                        </TouchableOpacity> :
+                        <View style={ { display: "flex", alignItems: "center" } }>
+                            <Text style={ { fontSize: 20, fontWeight: 'bold', alignSelf: 'center', marginTop: 30, color: "#838383" } }>Hallo { userLoginData.user[ 0 ].name } !</Text>
+                            <Text style={ { fontSize: 25, fontWeight: 'bold', alignSelf: 'center', marginTop: 10, color: "#838383" } }>Terima kasih telah menunggu.</Text>
 
+
+                            {
+                                userLoginData.queueNumber === currentQueue && userLoginData.status === "on process" ?
+                                    <View style={ styles.body_indo }>
+                                        <Text style={ { fontSize: 20, fontWeight: 'bold', alignSelf: 'center', marginTop: 20, color: "#557571" } }>Sekarang adalah giliran kamu. </Text>
+                                        <Text style={ { marginTop: 20, fontSize: 15, width: 350, textAlign: "center", marginBottom: 20 } }>Silahkan masuk ke dalam ruangan pemeriksaan poliklinik { userLoginData.doctor[ 0 ].polyclinic }</Text>
+
+                                        <View style={ { alignItems: "center" } }>
+                                            <Text style={ { color: "#e66767", width: 150, height: 30, textAlign: "center", fontSize: 18 } }>Antrian kamu</Text>
+
+                                            {
+                                                show ?
+
+                                                    <View style={ styles.contentCard }>
+
+                                                        {
+                                                            poli === "umum" ?
+                                                                <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>A { userLoginData.queueNumber }</Text>
+                                                                :
+                                                                <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>B { userLoginData.queueNumber }</Text>
+                                                        }
+                                                    </View> :
+                                                    <View style={ styles.contentCard }></View>
+
+                                            }
+                                        </View>
+                                        <Text style={ { marginTop: 20 } }>Semoga lekas sembuh !</Text>
+                                        <Text style={ { marginTop: 10 } }>Good luck !</Text>
+                                    </View> :
+                                    <>
+
+
+                                        <Text style={ { fontSize: 15, fontWeight: 'bold', alignSelf: 'center', marginTop: 15, color: "#d8d3cd" } }>Berikut informasi posisi antrian kamu:</Text>
+                                        <View style={ styles.body_indo }>
+
+                                            <View style={ { display: "flex", marginTop: 20, alignItems: "center" } }>
+                                                <View style={ { marginBottom: 20 } }>
+                                                    <Text style={ { fontSize: 30, color: "#2d4059", fontWeight: "bold" } }>Poli { userLoginData.doctor[ 0 ].polyclinic }</Text>
+                                                </View>
+                                                <View style={ { display: "flex", flexDirection: "row" } }>
+
+                                                    <View style={ { alignItems: "center" } }>
+                                                        <Text style={ { color: "#e66767", width: 150, height: 30, textAlign: "center", fontSize: 18 } }>Antrian kamu</Text>
+                                                        <View style={ styles.contentCard }>
+
+                                                            {
+                                                                poli === "umum" ? <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>A { userLoginData.queueNumber }</Text> : <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>B { userLoginData.queueNumber }</Text>
+                                                            }
+                                                        </View>
+                                                    </View>
+                                                    <View style={ { alignItems: "center" } }>
+                                                        <Text style={ { color: "#e66767", width: 150, height: 30, textAlign: "center", fontSize: 18 } }>Antrian sekarang</Text>
+                                                        <View style={ styles.contentCard }>
+                                                            {
+                                                                poli === "umum" ? <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>A { currentQueue }</Text> : <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>B { currentQueue }</Text>
+                                                            }
+                                                        </View>
+                                                    </View>
+                                                </View>
+                                            </View>
+                                            <View style={ styles.bottom_info }>
+
+                                                <Text style={ { fontSize: 20, fontWeight: 'bold', color: "#838383" } }>Poliklinik pemeriksaan { userLoginData.doctor[ 0 ].polyclinic }</Text>
+
+                                                <Text style={ { fontSize: 20, fontWeight: 'bold', color: "#838383" } }>oleh  { userLoginData.doctor[ 0 ].name }</Text>
+                                            </View>
+                                        </View>
+                                    </>
+                            }
+
+                        </View>
+                    }
+                </View>
+            }
         </View>
     )
 }
@@ -147,7 +293,8 @@ const styles = StyleSheet.create({
         marginTop: 40,
         alignItems: "center",
         backgroundColor: "#c8d5b9",
-        height: 400
+        height: 400,
+        width: 400
     },
     bottom_info: {
         marginTop: 30

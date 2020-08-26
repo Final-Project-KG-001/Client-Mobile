@@ -1,8 +1,11 @@
 import React from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import client, { IS_LOGIN } from '../config/apolloClient'
+import { useQuery } from '@apollo/client';
 
 export default function Admin({ navigation }) {
+    const isLogin = useQuery(IS_LOGIN)
+
     function toQRScan(event) {
         event.preventDefault();
         navigation.navigate("QRCodeScan");
@@ -17,7 +20,7 @@ export default function Admin({ navigation }) {
             data: {
                 isLogin: {
                     token: "",
-                    email: ""
+                    email: isLogin.data.isLogin.email
                 }
             }
         })
@@ -31,12 +34,12 @@ export default function Admin({ navigation }) {
             </View>
             <View>
                 <TouchableOpacity
-                onPress={toQRScan}
-                style={{ ...styles.button, backgroundColor: "blue" }}
-                >
-                <Text style={{ ...styles.buttonText, color: "white" }}>Scan QR Code</Text>
+                    onPress={toQRScan}
+                    style={{ ...styles.button, backgroundColor: "blue" }}
+                    >
+                    <Text style={{ ...styles.buttonText, color: "white" }}>Scan QR Code</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={logout} style={{ ...styles.button }}>
+                <TouchableOpacity onPress={logout} style={{ ...styles.button, backgroundColor: 'red' }}>
                     <Text style={{ fontSize:20, fontWeight: 'bold', color: 'white' }}>Logout</Text>
                 </TouchableOpacity>
             </View>
@@ -62,8 +65,7 @@ const styles = StyleSheet.create({
         borderRadius: 35,
         alignItems: "center",
         justifyContent: "center",
-        marginVertical: 5,
-        marginBottom: 30,
+        marginVertical: 30
     },
     buttonText: {
         fontSize: 20,
