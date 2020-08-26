@@ -16,7 +16,7 @@ export default function DoctorCard({ doctor }) {
                     position: 'absolute', flex: 1, height: 85, width: 85, borderRadius: 40, borderColor: 'white', borderWidth: 3, margin: 6
                 } } />
                 <Text style={ { marginLeft: 100, marginTop: 7, fontSize: 20, fontWeight: 'bold' } }>Dr. Hary Tungadi</Text>
-                <Text style={ { marginLeft: 100 } }> Umum</Text>
+                <Text style={ { marginLeft: 100 } }>General</Text>
             </View>
         </View>
     )

@@ -161,18 +161,18 @@ export default function Home({ navigation }) {
                             <Text onPress={ makeAppointment } style={ { ...styles.buttonText, color: 'white' } }>Make Appointment</Text>
                         </TouchableOpacity> :
                         <View style={ { display: "flex", alignItems: "center" } }>
-                            <Text style={ { fontSize: 20, fontWeight: 'bold', alignSelf: 'center', marginTop: 30, color: "#838383" } }>Hallo { userLoginData.user[ 0 ].name } !</Text>
-                            <Text style={ { fontSize: 25, fontWeight: 'bold', alignSelf: 'center', marginTop: 10, color: "#838383" } }>Terima kasih telah menunggu.</Text>
+                            <Text style={ { fontSize: 20, fontWeight: 'bold', alignSelf: 'center', marginTop: 30, color: "#838383" } }>Hello, { userLoginData.user[ 0 ].name } !</Text>
+                            <Text style={ { fontSize: 25, fontWeight: 'bold', alignSelf: 'center', marginTop: 10, color: "#838383" } }>Thank you for waiting</Text>
 
 
                             {
                                 userLoginData.queueNumber === currentQueue && userLoginData.status === "on process" ?
                                     <View style={ styles.body_indo }>
-                                        <Text style={ { fontSize: 20, fontWeight: 'bold', alignSelf: 'center', marginTop: 20, color: "#557571" } }>Sekarang adalah giliran kamu. </Text>
-                                        <Text style={ { marginTop: 20, fontSize: 15, width: 350, textAlign: "center", marginBottom: 20 } }>Silahkan masuk ke dalam ruangan pemeriksaan poliklinik { userLoginData.doctor[ 0 ].polyclinic }</Text>
+                                        <Text style={ { fontSize: 20, fontWeight: 'bold', alignSelf: 'center', marginTop: 20, color: "#557571" } }>It's your turn now </Text>
+                                        <Text style={ { marginTop: 20, fontSize: 15, width: 350, textAlign: "center", marginBottom: 20 } }>Please enter the room for {userLoginData.doctor[ 0 ].polyclinic == "gigi" ? "Dental" : "General"} polyclinic</Text>
 
                                         <View style={ { alignItems: "center" } }>
-                                            <Text style={ { color: "#e66767", width: 150, height: 30, textAlign: "center", fontSize: 18 } }>Antrian kamu</Text>
+                                            <Text style={ { color: "#e66767", width: 200, height: 30, textAlign: "center", fontSize: 18 } }>Your queue number</Text>
 
                                             {
                                                 show ?
@@ -190,23 +190,23 @@ export default function Home({ navigation }) {
 
                                             }
                                         </View>
-                                        <Text style={ { marginTop: 20 } }>Semoga lekas sembuh !</Text>
-                                        <Text style={ { marginTop: 10 } }>Good luck !</Text>
+                                        <Text style={ { marginTop: 20 } }>Get well soon :)</Text>
+                                        <Text style={ { marginTop: 10 } }>Good luck</Text>
                                     </View> :
                                     <>
 
 
-                                        <Text style={ { fontSize: 15, fontWeight: 'bold', alignSelf: 'center', marginTop: 15, color: "#d8d3cd" } }>Berikut informasi posisi antrian kamu:</Text>
+                                        <Text style={ { fontSize: 15, fontWeight: 'bold', alignSelf: 'center', marginTop: 15, color: "#d8d3cd" } }>Current queue information</Text>
                                         <View style={ styles.body_indo }>
 
                                             <View style={ { display: "flex", marginTop: 20, alignItems: "center" } }>
                                                 <View style={ { marginBottom: 20 } }>
-                                                    <Text style={ { fontSize: 30, color: "#2d4059", fontWeight: "bold" } }>Poli { userLoginData.doctor[ 0 ].polyclinic }</Text>
+                                                    <Text style={ { fontSize: 30, color: "#2d4059", fontWeight: "bold" } }>Polyclinic - { userLoginData.doctor[ 0 ].polyclinic == "gigi" ? "Dental" : "General" }</Text>
                                                 </View>
                                                 <View style={ { display: "flex", flexDirection: "row" } }>
 
                                                     <View style={ { alignItems: "center" } }>
-                                                        <Text style={ { color: "#e66767", width: 150, height: 30, textAlign: "center", fontSize: 18 } }>Antrian kamu</Text>
+                                                        <Text style={ { color: "#e66767", width: 150, height: 30, textAlign: "center", fontSize: 18 } }>Your Number</Text>
                                                         <View style={ styles.contentCard }>
 
                                                             {
@@ -215,7 +215,7 @@ export default function Home({ navigation }) {
                                                         </View>
                                                     </View>
                                                     <View style={ { alignItems: "center" } }>
-                                                        <Text style={ { color: "#e66767", width: 150, height: 30, textAlign: "center", fontSize: 18 } }>Antrian sekarang</Text>
+                                                        <Text style={ { color: "#e66767", width: 150, height: 30, textAlign: "center", fontSize: 18 } }>Current Queue</Text>
                                                         <View style={ styles.contentCard }>
                                                             {
                                                                 userLoginData.doctor[ 0 ].polyclinic === "umum" ? <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>A { currentQueue }</Text> : <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>B { currentQueue }</Text>
@@ -226,9 +226,9 @@ export default function Home({ navigation }) {
                                             </View>
                                             <View style={ styles.bottom_info }>
 
-                                                <Text style={ { fontSize: 20, fontWeight: 'bold', color: "#838383" } }>Poliklinik pemeriksaan { userLoginData.doctor[ 0 ].polyclinic }</Text>
+                                                <Text style={ { fontSize: 20, fontWeight: 'bold', color: "#838383" } }>{ userLoginData.doctor[ 0 ].polyclinic == "gigi" ? "Dental" : "General" } Polyclinic</Text>
 
-                                                <Text style={ { fontSize: 20, fontWeight: 'bold', color: "#838383" } }>oleh  { userLoginData.doctor[ 0 ].name }</Text>
+                                                <Text style={ { fontSize: 20, fontWeight: 'bold', color: "#838383" } }>{ userLoginData.doctor[ 0 ].name }</Text>
                                             </View>
                                         </View>
                                     </>

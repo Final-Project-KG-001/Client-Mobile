@@ -49,7 +49,9 @@ export default function MakeAppointment({ navigation }) {
     const { loading, error, data } = useQuery(GET_DATA, {
         variables: { access_token: isLogin.data.isLogin.token },
     })
+
     const [ addAppointment, res ] = useMutation(ADD_APPOINTMENT)
+
     async function submit() {
         try {
             const sortByPoly = data.appointments.filter(x => (x.doctor[ 0 ].polyclinic === itemValue.polyclinic))
@@ -100,8 +102,8 @@ export default function MakeAppointment({ navigation }) {
             }
             { data &&
                 <View style={ { paddingHorizontal: 20, paddingTop: 30 } }>
-                    <Text style={ { fontSize: 18, color: "#838383", fontWeight: 'bold', marginBottom: 20, alignSelf: 'center' } }>Kamu belum memiliki appointment.</Text>
-                    <Text style={ { color: "#838383", fontWeight: 'bold', marginBottom: 20, alignSelf: 'center' } }>Silahkan membuat appointment baru untuk masuk dalam daftar antrian hari ini.</Text>
+                    <Text style={ { fontSize: 18, color: "#838383", fontWeight: 'bold', marginBottom: 20, alignSelf: 'center' } }>You don't have any appointment today</Text>
+                    <Text style={ { color: "#838383", fontWeight: 'bold', marginBottom: 20, alignSelf: 'center', textAlign: "center" } }>Please make a new appointment to consult with our doctors</Text>
                     <Picker
                         placeholder="Klik untuk pilih dokter ..."
                         selectedValue={ itemValue }
@@ -116,7 +118,7 @@ export default function MakeAppointment({ navigation }) {
                         }
                     </Picker>
                     <TouchableOpacity onPress={ submit } style={ { ...styles.button, backgroundColor: '#ea8685' } }>
-                        <Text style={ { ...styles.buttonText, color: 'white' } }>Tambahkan</Text>
+                        <Text style={ { ...styles.buttonText, color: 'white' } }>Add</Text>
                     </TouchableOpacity>
                     <View style={ { alignItems: 'center', padding: 0, marginTop: 40 } }>
                         <Image source={ require('../assets/appointment.png') } style={ styles.picture } />
