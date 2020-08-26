@@ -44,12 +44,11 @@ export default function MakeAppointment({ navigation }) {
         language: 'javascript',
     };
     const [ itemValue, setItemValue ] = useState('Pilih dokter/poli:')
+    const isLogin = useQuery(IS_LOGIN)
     const { loading, error, data } = useQuery(GET_DATA, {
         variables: { access_token: isLogin.data.isLogin.token },
     })
-    const isLogin = useQuery(IS_LOGIN)
     const [ addAppointment, res ] = useMutation(ADD_APPOINTMENT)
-
     async function submit() {
         try {
             const sortByPoly = data.appointments.filter(x => (x.doctor[ 0 ].polyclinic === itemValue.polyclinic))
