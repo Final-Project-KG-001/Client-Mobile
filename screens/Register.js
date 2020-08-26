@@ -32,10 +32,10 @@ export default function Register({ navigation }) {
                     phone = '62' + phoneNumber
                 }
             } else {
-                setError({ message: 'phone number minimal 10 karakter' })
+                setError({ message: 'Phone number at least 10 characters' })
             }
             if (name == '' || email == '' || password == '') {
-                setError({ message: 'form tidak boleh kosong' })
+                setError({ message: 'Any field cannot be empty!' })
             } else {
                 setError({})
             }
@@ -61,9 +61,11 @@ export default function Register({ navigation }) {
             <View style={ styles.div_register }>
                 <Text style={ { fontWeight: 'bold', fontSize: 30, alignSelf: 'center', marginBottom: 5, color: "#3b6978" } }>Register</Text>
                 <TextInput onChangeText={ (text) => setName(text) } placeholder="Your Name" style={ styles.textInput } placeholderTextColor="#838383" />
-                <Text style={ { marginLeft: 30, color: "#3b6978" } }>Date Of Birth</Text>
+                {/* <Text style={ { marginLeft: 30, color: "#3b6978" } }>Date Birth</Text> */ }
+
+
                 <DatePicker
-                    style={ { alignSelf: 'center', width: 320 } }
+                    style={ { ...styles.textInput, alignSelf: 'center', width: 320, borderRadius: 25, backgroundColor: "white" } }
                     date={ dob }
                     mode="date"
                     placeholder="Date of Birth"
@@ -76,10 +78,16 @@ export default function Register({ navigation }) {
                             position: 'relative',
                             left: 0,
                             top: 4,
-                            marginLeft: 0
+                            marginLeft: 0,
+                            marginRight: 20,
+                            marginBottom: 10
                         },
                         dateInput: {
-                            marginLeft: 36
+                            marginLeft: 10,
+                            alignItems: "flex-start",
+                            outLine: "none",
+                            borderColor: "white",
+                            height: 35,
                         }
                         // ... You can check the source to find the other keys.
                     } }
@@ -90,7 +98,7 @@ export default function Register({ navigation }) {
                 <TextInput onChangeText={ (text) => setEmail(text) } placeholder="Email" style={ styles.textInput } placeholderTextColor="#838383" />
                 <TextInput secureTextEntry={ true } onChangeText={ (text) => setPassword(text) } placeholder="Password" style={ styles.textInput } placeholderTextColor="#838383" />
                 <TextInput onChangeText={ (text) => setPhoneNumber(text) } placeholder="Phone Number" style={ styles.textInput } placeholderTextColor="#838383" />
-                { error && <Text style={ { alignSelf: "center", color: "#3b6978" } }>{ error.message }</Text> }
+                { error && <Text style={ { alignSelf: "center", color: "red", margin: 10 } }>{ error.message }</Text> }
                 <TouchableOpacity onPress={ register } style={ { ...styles.button, backgroundColor: '#ea8685' } }>
                     <Text style={ { ...styles.buttonText, color: 'white' } }>Submit</Text>
                 </TouchableOpacity>

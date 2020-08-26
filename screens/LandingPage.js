@@ -15,7 +15,7 @@ export default function LandingPage({ navigation }) {
         <Text style={ { fontWeight: 'bold', fontSize: 30, marginBottom: 10, color: "#ffa931" } }>QME for Hospital!</Text>
         <Text style={ { fontSize: 20, textAlign: 'center', marginBottom: 20, color: "#838383" } }>Help patients managing queue, no more time wasting standing in line.</Text>
       </View>
-      <TouchableOpacity onPress={ toLoginPage } style={ { ...styles.button, backgroundColor: '#3b6978' } }>
+      <TouchableOpacity onPress={ toLoginPage } style={ { ...styles.button, backgroundColor: '#85a392' } }>
         <Text style={ { ...styles.buttonText, color: 'white' } }>Getting Start</Text>
       </TouchableOpacity>
     </View>
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     borderRadius: 35,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 20
+    marginBottom: 60
   },
   buttonText: {
     fontSize: 20,

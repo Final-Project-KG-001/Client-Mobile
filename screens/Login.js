@@ -19,7 +19,7 @@ const LOGIN_ADMIN = gql`
 `
 
 export default function Login({ navigation }) {
-    const [error, setError] = useState({ message: '' })
+    const [ error, setError ] = useState({ message: '' })
     const [ email, setEmail ] = useState('')
     const [ password, setPassword ] = useState('')
 
@@ -30,7 +30,7 @@ export default function Login({ navigation }) {
     async function signIn(event) {
         try {
             if (email == '' || password == '') {
-                setError({ message: 'form tidak boleh kosong' })
+                setError({ message: 'Any field cannot be empty!' })
             } else {
                 setError({})
                 if (email === 'admin@mail.com') {
@@ -40,7 +40,7 @@ export default function Login({ navigation }) {
                             password: password
                         }
                     })
-                    
+
                 } else {
                     await loginUser({
                         variables: {
@@ -81,7 +81,7 @@ export default function Login({ navigation }) {
             }
         } catch (err) {
             console.log(err)
-            setError({ message: 'cek form anda atau register jika belum punya akun' })
+            setError({ message: 'Check input field or register' })
         }
     }
     function register(event) {
@@ -105,10 +105,10 @@ export default function Login({ navigation }) {
                 <Image source={ require('../assets/loginicon.png') } style={ styles.login_icon } />
                 <TextInput onChangeText={ (text) => setEmail(text) } placeholder="Email" placeholderTextColor="#838383" style={ styles.textInput } />
                 <TextInput secureTextEntry={ true } onChangeText={ (text) => setPassword(text) } placeholderTextColor="#838383" type="password" placeholder="Password" style={ styles.textInput } />
-                { error && <Text style= {{alignSelf: "center", color: "#3b6978"}}>{error.message}</Text> }
+                { error && <Text style={ { alignSelf: "center", color: "red", marginTop: 5 } }>{ error.message }</Text> }
                 <TouchableOpacity onPress={ signIn } style={ {
                     ...styles.button, backgroundColor: '#ea8685',
-                    marginTop: 20,
+                    marginTop: 5,
                 } }>
                     <Text style={ { ...styles.buttonText } }>LOGIN</Text>
                 </TouchableOpacity>

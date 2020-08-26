@@ -48,6 +48,7 @@ export default function Home({ navigation }) {
     const [ hasQueueNumber, setHasQueueNumber ] = useState(false)
     const [ currentQueue, setCurrentQueue ] = useState(0)
     const [ poli, setPoli ] = useState("")
+    const [ show, setShow ] = useState(true)
 
     const isLogin = useQuery(IS_LOGIN)
     const users = useQuery(GET_USERS, {
@@ -61,7 +62,7 @@ export default function Home({ navigation }) {
 
     useEffect(() => {
         if (!loading && data) {
-            console.log(data.appointments)
+            // console.log(data.appointments)
             const findQuery = data.appointments.find(appointment => (
                 appointment.user && appointment.user[ 0 ].email === isLogin.data.isLogin.email && appointment.status !== "done"
             ))
@@ -70,7 +71,7 @@ export default function Home({ navigation }) {
                 const findOnProcess = data.appointments.find(appointment => (
                     appointment.status === "on process" && findQuery.doctor[ 0 ]._id === appointment.doctorId
                 ))
-                console.log(data.appointments, "=======ini data appointment", findOnProcess)
+                // console.log(data.appointments, "=======ini data appointment", findOnProcess)
                 if (findOnProcess) {
 
                     setCurrentQueue(findOnProcess.queueNumber)
@@ -103,6 +104,7 @@ export default function Home({ navigation }) {
             })
         }
     }, [ data, loading ])
+    // console.log(hasQueueNumber)
 
     useEffect(() => {
         subscribeToMore({
@@ -120,6 +122,17 @@ export default function Home({ navigation }) {
         })
     }, [])
 
+    // if (userLoginData.queueNumber === currentQueue && userLoginData.status === "on process") {
+
+    //         setInterval(() => {
+
+    //             setShow(!show)
+    //         }, 1000,)
+
+    // }
+
+
+
     function makeAppointment(event) {
         event.preventDefault()
         navigation.navigate('MakeAppointment')
@@ -128,7 +141,7 @@ export default function Home({ navigation }) {
     return (
         <View style={ styles.container }>
             <View style={ styles.header }>
-                <Text style={ { fontSize: 20, fontWeight: 'bold' } }>Queue Info</Text>
+                <Text style={ { fontSize: 15, fontWeight: 'bold' } }>QMe Board</Text>
             </View>
             { loading &&
                 <View>
@@ -147,36 +160,78 @@ export default function Home({ navigation }) {
                             <Text onPress={ makeAppointment } style={ { ...styles.buttonText, color: 'white' } }>Make Appointment</Text>
                         </TouchableOpacity> :
                         <View style={ { display: "flex", alignItems: "center" } }>
-                            <Text style={ { fontSize: 20, fontWeight: 'bold', alignSelf: 'center', marginTop: 30, color: "#838383" } }>Hy { userLoginData.user[ 0 ].name }</Text>
+                            <Text style={ { fontSize: 20, fontWeight: 'bold', alignSelf: 'center', marginTop: 30, color: "#838383" } }>Hallo { userLoginData.user[ 0 ].name } !</Text>
                             <Text style={ { fontSize: 25, fontWeight: 'bold', alignSelf: 'center', marginTop: 10, color: "#838383" } }>Terima kasih telah menunggu.</Text>
-                            <Text style={ { fontSize: 15, fontWeight: 'bold', alignSelf: 'center', marginTop: 15, color: "#d8d3cd" } }>Berikut informasi posisi antrian kamu:</Text>
-                            <View style={ styles.body_indo }>
-                                <View style={ { display: "flex", flexDirection: "row", marginTop: 60 } }>
-                                    <View style={ { alignItems: "center" } }>
-                                        <Text style={ { color: "#e66767", width: 150, height: 30, textAlign: "center", fontSize: 18 } }>Antrian kamu</Text>
-                                        <View style={ styles.contentCard }>
+
+
+                            {
+                                userLoginData.queueNumber === currentQueue && userLoginData.status === "on process" ?
+                                    <View style={ styles.body_indo }>
+                                        <Text style={ { fontSize: 20, fontWeight: 'bold', alignSelf: 'center', marginTop: 20, color: "#557571" } }>Sekarang adalah giliran kamu. </Text>
+                                        <Text style={ { marginTop: 20, fontSize: 15, width: 350, textAlign: "center", marginBottom: 20 } }>Silahkan masuk ke dalam ruangan pemeriksaan poliklinik { userLoginData.doctor[ 0 ].polyclinic }</Text>
+
+                                        <View style={ { alignItems: "center" } }>
+                                            <Text style={ { color: "#e66767", width: 150, height: 30, textAlign: "center", fontSize: 18 } }>Antrian kamu</Text>
 
                                             {
-                                                poli === "umum" ? <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>A { userLoginData.queueNumber }</Text> : <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>B { userLoginData.queueNumber }</Text>
+                                                show ?
+
+                                                    <View style={ styles.contentCard }>
+
+                                                        {
+                                                            poli === "umum" ?
+                                                                <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>A { userLoginData.queueNumber }</Text>
+                                                                :
+                                                                <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>B { userLoginData.queueNumber }</Text>
+                                                        }
+                                                    </View> :
+                                                    <View style={ styles.contentCard }></View>
+
                                             }
                                         </View>
-                                    </View>
-                                    <View style={ { alignItems: "center" } }>
-                                        <Text style={ { color: "#e66767", width: 150, height: 30, textAlign: "center", fontSize: 18 } }>Antrian sekarang</Text>
-                                        <View style={ styles.contentCard }>
-                                            {
-                                                poli === "umum" ? <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>A { currentQueue }</Text> : <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>B { currentQueue }</Text>
-                                            }
+                                        <Text style={ { marginTop: 20 } }>Semoga lekas sembuh !</Text>
+                                        <Text style={ { marginTop: 10 } }>Good luck !</Text>
+                                    </View> :
+                                    <>
+
+
+                                        <Text style={ { fontSize: 15, fontWeight: 'bold', alignSelf: 'center', marginTop: 15, color: "#d8d3cd" } }>Berikut informasi posisi antrian kamu:</Text>
+                                        <View style={ styles.body_indo }>
+
+                                            <View style={ { display: "flex", marginTop: 20, alignItems: "center" } }>
+                                                <View style={ { marginBottom: 20 } }>
+                                                    <Text style={ { fontSize: 30, color: "#2d4059", fontWeight: "bold" } }>Poli { userLoginData.doctor[ 0 ].polyclinic }</Text>
+                                                </View>
+                                                <View style={ { display: "flex", flexDirection: "row" } }>
+
+                                                    <View style={ { alignItems: "center" } }>
+                                                        <Text style={ { color: "#e66767", width: 150, height: 30, textAlign: "center", fontSize: 18 } }>Antrian kamu</Text>
+                                                        <View style={ styles.contentCard }>
+
+                                                            {
+                                                                poli === "umum" ? <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>A { userLoginData.queueNumber }</Text> : <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>B { userLoginData.queueNumber }</Text>
+                                                            }
+                                                        </View>
+                                                    </View>
+                                                    <View style={ { alignItems: "center" } }>
+                                                        <Text style={ { color: "#e66767", width: 150, height: 30, textAlign: "center", fontSize: 18 } }>Antrian sekarang</Text>
+                                                        <View style={ styles.contentCard }>
+                                                            {
+                                                                poli === "umum" ? <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>A { currentQueue }</Text> : <Text style={ { fontSize: 50, fontWeight: 'bold', color: "#e66767" } }>B { currentQueue }</Text>
+                                                            }
+                                                        </View>
+                                                    </View>
+                                                </View>
+                                            </View>
+                                            <View style={ styles.bottom_info }>
+
+                                                <Text style={ { fontSize: 20, fontWeight: 'bold', color: "#838383" } }>Poliklinik pemeriksaan { userLoginData.doctor[ 0 ].polyclinic }</Text>
+
+                                                <Text style={ { fontSize: 20, fontWeight: 'bold', color: "#838383" } }>oleh  { userLoginData.doctor[ 0 ].name }</Text>
+                                            </View>
                                         </View>
-                                    </View>
-                                </View>
-                                <View style={ styles.bottom_info }>
-
-                                    <Text style={ { fontSize: 20, fontWeight: 'bold', color: "#838383" } }>Poliklinik pemeriksaan { poli && poli }</Text>
-
-                                    <Text style={ { fontSize: 20, fontWeight: 'bold', color: "#838383" } }>oleh  { userLoginData.doctor[ 0 ].name }</Text>
-                                </View>
-                            </View>
+                                    </>
+                            }
 
                         </View>
                     }
@@ -238,7 +293,8 @@ const styles = StyleSheet.create({
         marginTop: 40,
         alignItems: "center",
         backgroundColor: "#c8d5b9",
-        height: 400
+        height: 400,
+        width: 400
     },
     bottom_info: {
         marginTop: 30
