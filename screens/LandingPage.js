@@ -11,12 +11,12 @@ export default function LandingPage({ navigation }) {
     <View style={ styles.container }>
       <View style={ { ...StyleSheet.absoluteFill, alignItems: "center", marginTop: 100 } }>
         <Image source={ require('../assets/doctor.png') } style={ { width: 400, height: 330 } } />
-        <Text style={ { fontSize: 25, textAlign: 'center', marginTop: 20 } }>Say good bye to snaky line.</Text>
-        <Text style={ { fontWeight: 'bold', fontSize: 30, marginBottom: 10, color: "#ffa931" } }>QME for Hospital!</Text>
-        <Text style={ { fontSize: 20, textAlign: 'center', marginBottom: 20, color: "#838383" } }>Help patients managing queue, no more time wasting standing in line.</Text>
+        <Text style={ { fontSize: 25, textAlign: 'center', marginTop: 20 } }>Say good bye to snaky line</Text>
+        <Text style={ { fontWeight: 'bold', fontSize: 30, marginBottom: 10, color: "#ffa931" } }>QME for Hospital</Text>
+        <Text style={ { fontSize: 20, textAlign: 'center', marginBottom: 20, color: "#838383" } }>Help patients managing queue, no more time wasted standing in line.</Text>
       </View>
       <TouchableOpacity onPress={ toLoginPage } style={ { ...styles.button, backgroundColor: '#85a392' } }>
-        <Text style={ { ...styles.buttonText, color: 'white' } }>Getting Start</Text>
+        <Text style={ { ...styles.buttonText, color: 'white' } }>Getting Started</Text>
       </TouchableOpacity>
     </View>
   )

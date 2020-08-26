@@ -113,7 +113,7 @@ export default function Login({ navigation }) {
                     <Text style={ { ...styles.buttonText } }>LOGIN</Text>
                 </TouchableOpacity>
                 <View style={ { ...styles.button, marginBottom: 20 } }>
-                    <Text style={ { ...styles.buttonText, color: "#797a7e", fontSize: 15 } }>Not registered? <Text onPress={ register } style={ { color: "#eebb4d" } }>Create an account!</Text></Text>
+                    <Text style={ { ...styles.buttonText, color: "#797a7e", fontSize: 15 } }>Not a user? <Text onPress={ register } style={ { color: "#eebb4d" } }>Sign Up!</Text></Text>
                 </View>
             </View>
         </View>

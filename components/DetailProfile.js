@@ -12,7 +12,7 @@ export default function DetailProfile({user, logout}) {
                     <Text style={{ fontSize: 20, fontWeight: 'bold', color:"#838383"}}>{user.email}</Text>
                 </View>
                 <View style={{ marginTop: 10, marginHorizontal: 30 }}>
-                    <Text style={{ fontSize: 15}}>No Telp</Text>
+                    <Text style={{ fontSize: 15}}>Phone Number</Text>
                     <Text style={{ fontSize: 20, fontWeight: 'bold',color:"#838383"}}>{user.phoneNumber}</Text>
                 </View>
                 <View style={{ marginTop: 10, marginHorizontal: 30 }}>
