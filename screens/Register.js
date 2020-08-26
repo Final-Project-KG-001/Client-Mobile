@@ -22,7 +22,7 @@ export default function Register({ navigation }) {
     const [ registerUser, result ] = useMutation(REGISTER)
 
     async function register(event) {
-        event.preventDefault()
+        // event.preventDefault()
         try {
             let phone = null
             if (phoneNumber.length > 10) {

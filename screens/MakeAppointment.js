@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native'
 import { useQuery, useMutation, gql } from '@apollo/client'
 import { IS_LOGIN } from '../config/apolloClient'
 // import { Picker } from 'react-native-picker-dropdown'
-import {Picker} from 'native-base';
+import { Picker } from 'native-base';
 
 const ADD_APPOINTMENT = gql`
     mutation AddAppointment($doctorId:ID, $queueNumber:Int, $access_token:String) {
@@ -26,6 +26,7 @@ const GET_DATA = gql`
       doctor {
         name
         polyclinic
+        _id
       }
       user {
         name
@@ -69,8 +70,10 @@ export default function MakeAppointment({ navigation }) {
                 await addAppointment({
                     variables: {
                         doctorId: itemValue._id,
-                        queueNumber: Number(1)
-                    }
+                        queueNumber: Number(1),
+                        access_token: isLogin.data.isLogin.token,
+                    },
+                    refetchQueries: [ "GetAppointments" ]
                 })
                 navigation.navigate('Homepage')
             }
@@ -102,7 +105,7 @@ export default function MakeAppointment({ navigation }) {
                     <Picker
                         placeholder="Klik untuk pilih dokter ..."
                         selectedValue={ itemValue }
-                        style={ { height: 50, backgroundColor: 'white', opacity: 0.7, borderWidth: 1, borderColor: 'black', fontSize: 20 , width:325} }
+                        style={ { height: 50, backgroundColor: 'white', opacity: 0.7, borderWidth: 1, borderColor: 'black', fontSize: 20, width: 325 } }
                         onValueChange={ (value) => setItemValue(value) }
                         mode="dropdown"
                     >

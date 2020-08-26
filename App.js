@@ -18,22 +18,22 @@ const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <ApolloProvider client={client}>
+    <ApolloProvider client={ client }>
       <NavigationContainer>
         <Stack.Navigator
-          screenOptions={{
+          screenOptions={ {
             gestureEnabled: true,
             gestureDirection: "horizontal",
             cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-          }}
+          } }
           headerMode="none"
         >
-          <Stack.Screen name="LandingPage" component={LandingPage} />
-          <Stack.Screen name="Dashboard" component={Dashboard} />
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Register" component={Register} />
-          <Stack.Screen name="QRCodeScan" component={QRCodeScanner} />
-          <Stack.Screen name="Admin" component={Admin} />
+          <Stack.Screen name="LandingPage" component={ LandingPage } />
+          <Stack.Screen name="Dashboard" component={ Dashboard } />
+          <Stack.Screen name="Login" component={ Login } />
+          <Stack.Screen name="Register" component={ Register } />
+          <Stack.Screen name="QRCodeScan" component={ QRCodeScanner } />
+          <Stack.Screen name="Admin" component={ Admin } />
         </Stack.Navigator>
       </NavigationContainer>
     </ApolloProvider>
