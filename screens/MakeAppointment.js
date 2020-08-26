@@ -45,7 +45,7 @@ export default function MakeAppointment({ navigation }) {
     };
     const [ itemValue, setItemValue ] = useState('Pilih dokter/poli:')
     const { loading, error, data } = useQuery(GET_DATA, {
-        variables: { access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNDQ1ZGMzMTIxZjkwZjAxYWNjNDdlZSIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTgzNjk3ODZ9.rrF50fYJwJyXE9GeZSIAaDyvqprw0GG3YymtM4mv3XE" },
+        variables: { access_token: isLogin.data.isLogin.token },
     })
     const isLogin = useQuery(IS_LOGIN)
     const [ addAppointment, res ] = useMutation(ADD_APPOINTMENT)

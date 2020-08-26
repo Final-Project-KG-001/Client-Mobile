@@ -19,6 +19,8 @@ export default function Register({ navigation }) {
     const [ password, setPassword ] = useState('')
     const [ phoneNumber, setPhoneNumber ] = useState('')
 
+    const [ registerUser, result ] = useMutation(REGISTER)
+
     async function register(event) {
         event.preventDefault()
         try {
