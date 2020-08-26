@@ -19,6 +19,7 @@ const LOGIN_ADMIN = gql`
 `
 
 export default function Login({ navigation }) {
+    const [error, setError] = useState({ message: 'field tidak boleh kosong' })
     const [ email, setEmail ] = useState('')
     const [ password, setPassword ] = useState('')
 
@@ -27,40 +28,28 @@ export default function Login({ navigation }) {
     const [ loginAdmin, resultLoginAdmin ] = useMutation(LOGIN_ADMIN)
 
     async function signIn(event) {
-        event.preventDefault()
         try {
-            // const user = users.data.users.find(x => (x.email === email))
-            if (email === 'admin@mail.com') {
-                await loginAdmin({
-                    variables: {
-                        email: email,
-                        password: password
-                    }
-                })
-                console.log(res.data)
-                if (res.data) {
-                    client.readQuery({
-                        query: IS_LOGIN
-                    })
-                    client.writeQuery({
-                        query: IS_LOGIN,
-                        data: {
-                            isLogin: {
-                                token: res.data.loginAdmin.access_token,
-                                email: email
-                            }
-                        }
-                    })
-                }
-                // console.log(email, password)
+            if (email == '' || password == '') {
+                setError({ message: 'form tidak boleh kosong' })
             } else {
-                await loginUser({
-                    variables: {
-                        email: email,
-                        password: password
-                    }
-                })
-                if (result.data) {
+                setError({})
+                if (email === 'admin@mail.com') {
+                    await loginAdmin({
+                        variables: {
+                            email: email,
+                            password: password
+                        }
+                    })
+                    
+                } else {
+                    await loginUser({
+                        variables: {
+                            email: email,
+                            password: password
+                        }
+                    })
+                }
+                if (resultLoginAdmin.data && email === 'admin@mail.com') {
                     client.readQuery({
                         query: IS_LOGIN
                     })
@@ -68,47 +57,31 @@ export default function Login({ navigation }) {
                         query: IS_LOGIN,
                         data: {
                             isLogin: {
-                                token: result.data.loginUser.access_token,
+                                token: resultLoginAdmin.data.loginAdmin.access_token,
                                 email: email
                             }
                         }
                     })
+                    navigation.navigate('Admin')
+                } else if (resultLoginUser.data) {
+                    client.readQuery({
+                        query: IS_LOGIN
+                    })
+                    client.writeQuery({
+                        query: IS_LOGIN,
+                        data: {
+                            isLogin: {
+                                token: resultLoginUser.data.loginUser.access_token,
+                                email: email
+                            }
+                        }
+                    })
+                    navigation.navigate('Dashboard')
                 }
-            }
-
-            if (users.data) {
-                const user = users.data.users.find(x => (x.email === email))
-                client.readQuery({
-                    query: IS_LOGIN
-                })
-                client.writeQuery({
-                    query: IS_LOGIN,
-                    data: {
-                        isLogin: {
-                            token: resultLoginAdmin.data.loginAdmin.access_token,
-                            email: email
-                        }
-                    }
-                })
-                navigation.navigate('Admin')
-            } else if (resultLoginUser.data) {
-                client.readQuery({
-                    query: IS_LOGIN
-                })
-                client.writeQuery({
-                    query: IS_LOGIN,
-                    data: {
-                        isLogin: {
-                            token: resultLoginUser.data.loginUser.access_token,
-                            email: email
-                        }
-                    }
-                })
-                navigation.navigate('Dashboard')
             }
         } catch (err) {
             console.log(err)
-            console.log('internal server')
+            setError({ message: 'cek form anda atau register jika belum punya akun' })
         }
     }
     function register(event) {
@@ -132,6 +105,7 @@ export default function Login({ navigation }) {
                 <Image source={ require('../assets/loginicon.png') } style={ styles.login_icon } />
                 <TextInput onChangeText={ (text) => setEmail(text) } placeholder="Email" placeholderTextColor="#838383" style={ styles.textInput } />
                 <TextInput secureTextEntry={ true } onChangeText={ (text) => setPassword(text) } placeholderTextColor="#838383" type="password" placeholder="Password" style={ styles.textInput } />
+                { error && <Text style= {{alignSelf: "center", color: "#3b6978"}}>{error.message}</Text> }
                 <TouchableOpacity onPress={ signIn } style={ {
                     ...styles.button, backgroundColor: '#ea8685',
                     marginTop: 20,

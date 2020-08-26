@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
-import client, { IS_LOGIN } from '../config/apolloClient'
+import { IS_LOGIN } from '../config/apolloClient'
 
 export default function Admin({ navigation }) {
     function toQRScan(event) {

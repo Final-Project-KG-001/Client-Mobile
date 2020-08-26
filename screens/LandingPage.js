@@ -2,7 +2,6 @@ import React from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native'
 
 export default function LandingPage({ navigation }) {
-
   function toLoginPage(event) {
     event.preventDefault();
     navigation.navigate("Login");
@@ -27,7 +26,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    justifyContent: "center",
+    justifyContent: "flex-end",
   },
   imgBackground: {
     flex: 1,
@@ -40,9 +39,7 @@ const styles = StyleSheet.create({
     borderRadius: 35,
     alignItems: "center",
     justifyContent: "center",
-    marginVertical: 5,
-    marginBottom: 30,
-    marginTop: 500
+    marginBottom: 20
   },
   buttonText: {
     fontSize: 20,

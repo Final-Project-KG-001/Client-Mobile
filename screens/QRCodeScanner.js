@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Button, Platform } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { GET_APPOINTMENTS } from "../config/apolloClient";
+import { GET_APPOINTMENTS, IS_LOGIN } from "../config/apolloClient";
 
 const ADD_DENTAL = gql`
-  mutation AddDental($appointmentId: ID) {
-    addDental(appointmentId: $appointmentId) {
+  mutation AddDental($appointmentId: ID, $access_token:String) {
+    addDental(appointmentId: $appointmentId, access_token: $access_token) {
       status
       message
     }
@@ -14,8 +14,8 @@ const ADD_DENTAL = gql`
 `;
 
 const ADD_GENERAL = gql`
-  mutation AddGeneral($appointmentId: ID) {
-    addGeneral(appointmentId: $appointmentId) {
+  mutation AddGeneral($appointmentId: ID, $access_token:String) {
+    addGeneral(appointmentId: $appointmentId, access_token: $access_token) {
       status
       message
     }
@@ -26,17 +26,15 @@ export default function QRCodeScanner() {
   const [permission, setPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
 
-  const { loading, error, data } = useQuery(GET_APPOINTMENTS);
+  const { loading, error, data } = useQuery(GET_APPOINTMENTS, {
+    variables: { access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNDQ1OGIwMGRmZmMwMTAzNGM1NzVjMiIsImVtYWlsIjoidXNlcjFAbWFpbC5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTU5ODM1NDM4OH0.JFp1Q2TrZon4-myDvxjA4jxsmpKqihTVyhq8iYWQsNw" },
+  });
+
 
   const [appointments, setAppointment] = useState([]);
 
-<<<<<<< HEAD
   const [addDental] = useMutation(ADD_DENTAL);
   const [addGeneral] = useMutation(ADD_GENERAL);
-=======
-  const [addDental, resultDental] = useMutation(ADD_DENTAL);
-  const [addGeneral, resultGeneral] = useMutation(ADD_GENERAL);
->>>>>>> 7b629a87f2c727c2ad0219adaf24711ff718d056
 
   useEffect(() => {
     (async () => {
@@ -57,20 +55,19 @@ export default function QRCodeScanner() {
     console.log(`Bar code with type ${type} and data ${data} has been scanned!`);
     //Handle buat post ke dental/general
     appointments.map((appointment) => {
-<<<<<<< HEAD
-=======
       console.log(appointment)
->>>>>>> 7b629a87f2c727c2ad0219adaf24711ff718d056
       if(data === appointment.userId && appointment.status === 'waiting') {
         if(appointment.doctor[0].polyclinic === 'umum') {
           addGeneral({
             variables: {
+              access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNDQ1ZGMzMTIxZjkwZjAxYWNjNDdlZSIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTgzODY0OTZ9.1ruuq_cTkdpiy5Wf_r430AQYgWK5UsC3HnBtpMwYzQ4",
               appointmentId: appointment._id
             }
           });
         } else if(appointment.doctor[0].polyclinic === 'gigi') {
           addDental({
             variables: {
+              access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNDQ1ZGMzMTIxZjkwZjAxYWNjNDdlZSIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTgzODY0OTZ9.1ruuq_cTkdpiy5Wf_r430AQYgWK5UsC3HnBtpMwYzQ4",
               appointmentId: appointment._id
             }
           }); 
