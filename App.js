@@ -12,7 +12,7 @@ import LandingPage from "./screens/LandingPage";
 import Login from "./screens/Login";
 import Register from "./screens/Register";
 import Admin from "./screens/Admin";
-// import QRCodeScanner from "./screens/QRCodeScanner";
+import QRCodeScanner from "./screens/QRCodeScanner";
 
 const Stack = createStackNavigator();
 

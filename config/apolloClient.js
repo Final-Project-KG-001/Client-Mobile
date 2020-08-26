@@ -43,11 +43,6 @@ const client = new ApolloClient({
   }),
 })
 
-// const client = new ApolloClient({
-//   uri: 'http://54.254.218.69:4000/',
-//   cache: new InMemoryCache()
-// })
-
 export const IS_LOGIN = gql`
   query IsLogin {
     isLogin {
