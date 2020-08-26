@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native'
 import { useQuery, useMutation, gql } from '@apollo/client'
 import { IS_LOGIN } from '../config/apolloClient'
 // import { Picker } from 'react-native-picker-dropdown'
-import {Picker} from 'native-base';
+import { Picker } from 'native-base';
 
 const ADD_APPOINTMENT = gql`
     mutation AddAppointment($doctorId:ID, $queueNumber:Int, $access_token:String) {
@@ -45,7 +45,7 @@ export default function MakeAppointment({ navigation }) {
     };
     const [ itemValue, setItemValue ] = useState('Pilih dokter/poli:')
     const { loading, error, data } = useQuery(GET_DATA, {
-        variables: { access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmNDQ1ZGMzMTIxZjkwZjAxYWNjNDdlZSIsImVtYWlsIjoiYWRtaW5AbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTgzNjk3ODZ9.rrF50fYJwJyXE9GeZSIAaDyvqprw0GG3YymtM4mv3XE" },
+        variables: { access_token: isLogin.data.isLogin.token },
     })
     const isLogin = useQuery(IS_LOGIN)
     const [ addAppointment, res ] = useMutation(ADD_APPOINTMENT)
@@ -103,7 +103,7 @@ export default function MakeAppointment({ navigation }) {
                     <Picker
                         placeholder="Klik untuk pilih dokter ..."
                         selectedValue={ itemValue }
-                        style={ { height: 50, backgroundColor: 'white', opacity: 0.7, borderWidth: 1, borderColor: 'black', fontSize: 20 , width:325} }
+                        style={ { height: 50, backgroundColor: 'white', opacity: 0.7, borderWidth: 1, borderColor: 'black', fontSize: 20, width: 325 } }
                         onValueChange={ (value) => setItemValue(value) }
                         mode="dropdown"
                     >
