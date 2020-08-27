@@ -135,7 +135,7 @@ export default function MakeAppointment({ navigation }) {
                     >
                         {
                             data.doctors.map(doctor => (
-                                <Picker.Item key={ doctor._id } label={ `${ doctor.name } - poli ${ doctor.polyclinic }` } value={ doctor } />
+                                <Picker.Item key={ doctor._id } label={ `${ doctor.name } - poli ${ doctor.polyclinic }` } value={ doctor._id } />
                             ))
                         }
                     </Picker>
