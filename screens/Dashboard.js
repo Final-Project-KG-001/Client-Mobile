@@ -15,7 +15,7 @@ export default function Dashboard() {
                 let iconName
                 if (route.name == 'Home') {
                     iconName = 'ios-home'
-                } else if (route.name == 'ListDoctor') {
+                } else if (route.name == 'Doctors') {
                     iconName = 'ios-clipboard'
                 } else if (route.name == 'Profile') {
                     iconName = 'ios-person'
@@ -24,7 +24,7 @@ export default function Dashboard() {
             }
         }) }>
             <Tab.Screen name="Home" component={ HomeNavigation } />
-            <Tab.Screen name="ListDoctor" component={ ListDoctor } />
+            <Tab.Screen name="Doctors" component={ ListDoctor } />
             <Tab.Screen name="Profile" component={ Profile } />
         </Tab.Navigator>
     )

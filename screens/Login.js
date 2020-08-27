@@ -80,8 +80,8 @@ export default function Login({ navigation }) {
                 }
             }
         } catch (err) {
-            console.log(err)
-            setError({ message: 'Check input field or register' })
+            // console.log(err)
+            setError({ message: 'Check input field or register !' })
         }
     }
     function register(event) {

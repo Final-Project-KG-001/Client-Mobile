@@ -150,9 +150,14 @@ export default function Home({ navigation }) {
             { data &&
                 <View>
                     { !hasQueueNumber ?
-                        <TouchableOpacity style={ { ...styles.button, backgroundColor: 'blue' } }>
-                            <Text onPress={ makeAppointment } style={ { ...styles.buttonText, color: 'white' } }>Make Appointment</Text>
-                        </TouchableOpacity> :
+                        <>
+                            {/* <Text style={ { fontSize: 18, color: "#838383", fontWeight: 'bold', marginBottom: 20, alignSelf: 'center', marginTop: 30 } }>Hello {isLogin.data.isLogin} !</Text> */ }
+                            <Text style={ { fontSize: 18, color: "#838383", fontWeight: 'bold', marginBottom: 20, alignSelf: 'center', marginTop: 30 } }>You don't have any appointment today</Text>
+                            <Text style={ { color: "#838383", fontWeight: 'bold', marginBottom: 20, alignSelf: 'center', textAlign: "center", width: 300 } }>Please make a new appointment to consult with our doctors !</Text>
+                            <TouchableOpacity style={ { ...styles.button, backgroundColor: '#ea8685' } }>
+                                <Text onPress={ makeAppointment } style={ { ...styles.buttonText, color: 'white' } }>Make Appointment</Text>
+                            </TouchableOpacity>
+                        </> :
                         <View style={ { display: "flex", alignItems: "center" } }>
                             <Text style={ { fontSize: 20, fontWeight: 'bold', alignSelf: 'center', marginTop: 30, color: "#838383" } }>Hello, { userLoginData.user[ 0 ].name } !</Text>
                             <Text style={ { fontSize: 25, fontWeight: 'bold', alignSelf: 'center', marginTop: 10, color: "#838383" } }>Thank you for waiting</Text>
@@ -162,7 +167,7 @@ export default function Home({ navigation }) {
                                 userLoginData.queueNumber === currentQueue && userLoginData.status === "on process" ?
                                     <View style={ styles.body_indo }>
                                         <Text style={ { fontSize: 20, fontWeight: 'bold', alignSelf: 'center', marginTop: 20, color: "#557571" } }>It's your turn now </Text>
-                                        <Text style={ { marginTop: 20, fontSize: 15, width: 350, textAlign: "center", marginBottom: 20 } }>Please enter the room for {userLoginData.doctor[ 0 ].polyclinic == "gigi" ? "Dental" : "General"} polyclinic</Text>
+                                        <Text style={ { marginTop: 20, fontSize: 15, width: 350, textAlign: "center", marginBottom: 20 } }>Please enter the room for { userLoginData.doctor[ 0 ].polyclinic == "gigi" ? "Dental" : "General" } polyclinic</Text>
 
                                         <View style={ { alignItems: "center" } }>
                                             <Text style={ { color: "#e66767", width: 200, height: 30, textAlign: "center", fontSize: 18 } }>Your queue number</Text>
@@ -199,7 +204,7 @@ export default function Home({ navigation }) {
                                                 <View style={ { display: "flex", flexDirection: "row" } }>
 
                                                     <View style={ { alignItems: "center" } }>
-                                                        <Text style={ { color: "#e66767", width: 150, height: 30, textAlign: "center", fontSize: 18 } }>Your Number</Text>
+                                                        <Text style={ { color: "#e66767", width: 150, height: 30, textAlign: "center", fontSize: 18 } }>Your Queue Number</Text>
                                                         <View style={ styles.contentCard }>
 
                                                             {
@@ -275,7 +280,7 @@ const styles = StyleSheet.create({
     button: {
         backgroundColor: 'white',
         height: 50,
-        marginTop: 30,
+        marginTop: 60,
         marginHorizontal: 20,
         borderRadius: 35,
         alignItems: 'center',

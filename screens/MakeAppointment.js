@@ -51,10 +51,10 @@ export default function MakeAppointment({ navigation }) {
     })
 
     const [ addAppointment, res ] = useMutation(ADD_APPOINTMENT)
-    
+
     async function submit() {
         try {
-            if(itemValue) {
+            if (itemValue) {
                 const sortByPoly = data.appointments.filter(x => (x.doctorId === itemValue))
                 if (sortByPoly.length > 0) {
                     await addAppointment({
@@ -78,11 +78,11 @@ export default function MakeAppointment({ navigation }) {
                     navigation.navigate('Homepage')
                 }
             } else {
-                const sortByPoly = data.appointments.filter(x => (x.doctorId === data.doctors[0]._id))
+                const sortByPoly = data.appointments.filter(x => (x.doctorId === data.doctors[ 0 ]._id))
                 if (sortByPoly.length > 0) {
                     await addAppointment({
                         variables: {
-                            doctorId: data.doctors[0]._id,
+                            doctorId: data.doctors[ 0 ]._id,
                             queueNumber: Number(sortByPoly.length + 1),
                             access_token: isLogin.data.isLogin.token
                         },
@@ -92,7 +92,7 @@ export default function MakeAppointment({ navigation }) {
                 } else {
                     await addAppointment({
                         variables: {
-                            doctorId: data.doctors[0]._id,
+                            doctorId: data.doctors[ 0 ]._id,
                             queueNumber: Number(1),
                             access_token: isLogin.data.isLogin.token,
                         },
@@ -114,20 +114,20 @@ export default function MakeAppointment({ navigation }) {
             </View>
             { loading &&
                 <View>
-                    <Text>loading</Text>
+                    <Text style={ { fontSize: 20, fontWeight: 'bold', alignSelf: 'center', marginTop: 30, color: "#838383" } }>Loading..</Text>
                 </View>
             }
             { error &&
                 <View>
-                    <Text>error</Text>
+                    <Text style={ { fontSize: 20, fontWeight: 'bold', alignSelf: 'center', marginTop: 30, color: "#838383" } }>Oooops... Please Reload Your App</Text>
                 </View>
             }
             { data &&
                 <View style={ { paddingHorizontal: 20, paddingTop: 30 } }>
-                    <Text style={ { fontSize: 18, color: "#838383", fontWeight: 'bold', marginBottom: 20, alignSelf: 'center' } }>You don't have any appointment today</Text>
-                    <Text style={ { color: "#838383", fontWeight: 'bold', marginBottom: 20, alignSelf: 'center', textAlign: "center" } }>Please make a new appointment to consult with our doctors</Text>
+                    {/* <Text style={ { fontSize: 18, color: "#838383", fontWeight: 'bold', marginBottom: 20, alignSelf: 'center' } }>Please book a new appointment below!</Text> */ }
+                    <Text style={ { color: "#838383", fontWeight: 'bold', marginBottom: 20, alignSelf: 'center', textAlign: "center" } }>Choose a doctor and a polyclinic you wish to book below:</Text>
                     <Picker
-                        placeholder="Klik untuk pilih dokter ..."
+                        placeholder="Click to see doctors list ..."
                         selectedValue={ itemValue }
                         style={ { height: 50, backgroundColor: 'white', opacity: 0.7, borderWidth: 1, borderColor: 'black', fontSize: 20, width: 325 } }
                         onValueChange={ (value) => setItemValue(value) }
@@ -135,7 +135,7 @@ export default function MakeAppointment({ navigation }) {
                     >
                         {
                             data.doctors.map(doctor => (
-                                <Picker.Item key={ doctor._id } label={ `${ doctor.name } - poli ${ doctor.polyclinic }` } value={ doctor._id } />
+                                <Picker.Item key={ doctor._id } label={ `${ doctor.name } - ${ doctor.polyclinic == "umum" ? "general poly" : "dental poly" }` } value={ doctor._id } />
                             ))
                         }
                     </Picker>
